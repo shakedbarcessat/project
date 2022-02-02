@@ -6,7 +6,7 @@ Created on Fri Jan 14 08:29:03 2022
 """
 from PIL import Image
 import change_pictures_names
-
+import os
 
 
 def resize(data, path):
@@ -25,7 +25,7 @@ from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot
 
-def brighting_image(data, path, location, count, category):
+def brighting_image(main_path, data, path, location, count, category):
     last_location=0
     for image in data:
         # load the image
@@ -47,7 +47,7 @@ def brighting_image(data, path, location, count, category):
         	# convert to unsigned integers for viewing
             image = batch[0].astype('uint8')
             im = Image.fromarray(image)
-            path_im=r"D:\ShakedProjectY\augmented" +location+"\\"+category+"_img{0}.jpg".format(last_location)
+            path_im=os.path.join(main_path, r"augmented" +location+"\\"+category+"_img{0}.jpg".format(last_location))
             im.save(path_im)
         	# plot raw pixel data
             pyplot.imshow(image)
