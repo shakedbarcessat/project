@@ -7,18 +7,6 @@ Created on Fri Jan 14 08:29:03 2022
 from PIL import Image
 import change_pictures_names
 import os
-
-
-def resize(data, path):
-    new_data=[]
-    for item in data:
-        image=path+'\\'+item
-        im = Image.open(image)
-        imResize = im.resize((100,100))
-        new_data.append(imResize)
-    imResize.show()
-    return new_data
-
 from numpy import expand_dims
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
@@ -47,6 +35,7 @@ def brighting_image(main_path, data, path, location, count, category):
         	# convert to unsigned integers for viewing
             image = batch[0].astype('uint8')
             im = Image.fromarray(image)
+            im = im.resize((100, 100))
             path_im=os.path.join(main_path, r"augmented" +location+"\\"+category+"_img{0}.jpg".format(last_location))
             im.save(path_im)
         	# plot raw pixel data
