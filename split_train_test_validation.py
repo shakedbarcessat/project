@@ -11,7 +11,6 @@ def take_part(li, precent, number_of_elements):
     """
     Parameters
     ---------
-    
     """
     num = int(number_of_elements * precent)
     new_li = []
@@ -22,6 +21,7 @@ def take_part(li, precent, number_of_elements):
 
 
 def split_train_test_val(li, train = 0.7, test = 0.2, validation = 0.1):
+    
     number_of_elements=len(li)
     np.random.shuffle(li)
     train_data = take_part(li, train, number_of_elements)
@@ -38,26 +38,27 @@ def train_test_val_total(li, total, sign):
 
 def split_x_y(data):
     x=data
-    category=""
     y=[]
-    for i in range(len(x)):
-        category=(x[i].rsplit("_"))[0]
-        if(category=="book"):
+    category=" " 
+    for i in range(len(x)):        
+       category = (x[i].rsplit("_"))[0]
+       category = (x[i].rsplit("\\"))[::-1]
+       category=category[1]
+       if(category=="books"):
             y.append(0)
-        if(category=="newspaper"):
+       if(category=="newspapers"):
+            y.append(0)
+       if(category=="cardboard"):
+            y.append(0)
+       if(category=="glass bottles"):
+            y.append(0)
+       if(category=="fruits"):
             y.append(1)
-        if(category=="cardboard"):
-            y.append(2)
-        if(category=="glass"):
-            y.append(3)
-        if(category=="fruit"):
-            y.append(4)
-        if(category=="meat"):
-            y.append(5)
-        if(category=="vegtable"):
-            y.append(6)
-        if(category=="nature"):
-            y.append(7)
-    return y
-    
-        
+       if(category=="meat"):
+            y.append(1)
+       if(category=="vegtables"):
+            y.append(1)
+       if(category=="nature"):
+            y.append(1)
+    return y, x   
+ 
