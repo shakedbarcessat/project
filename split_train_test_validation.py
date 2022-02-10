@@ -5,6 +5,7 @@ Created on Fri Jan 21 10:26:11 2022
 @author: Student
 """
 import numpy as np
+import cv2
 import split_train_test_validation
 
 def take_part(li, precent, number_of_elements):
@@ -23,6 +24,7 @@ def take_part(li, precent, number_of_elements):
 def split_train_test_val(li, train = 0.7, test = 0.2, validation = 0.1):
     
     number_of_elements=len(li)
+    np.random.seed(7)
     np.random.shuffle(li)
     train_data = take_part(li, train, number_of_elements)
     test_data = take_part(li, test, number_of_elements)
@@ -62,3 +64,29 @@ def split_x_y(data):
             y.append(1)
     return y, x   
  
+    
+def normalize_pixels(li):
+    for i in range(len(li)):
+        li[i] = cv2.imread(li[i],cv2.IMREAD_GRAYSCALE)
+        norm = np.zeros((800,800))
+        final = cv2.normalize(li[i],  norm, 0, 255, cv2.NORM_MINMAX)
+        final_norm = final.astype('float32')
+        final_norm = final_norm / 255.0    
+        li[i]=final_norm
+    li = np.array(li) 
+    return li
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
