@@ -16,7 +16,7 @@ path = r'D:\ShakedProjectY'
 
 
 build_directory.build_directories(path)
-
+"""
 l_book=os.listdir(os.path.join(path, r'sorted\recycle\books'))
 p = os.path.join(path, r'sorted\recycle\books')
 change_pictures_names.brighting_image(path, l_book, p,'\\recycle\\books', int(6000/len(l_book)), "book")
@@ -41,7 +41,7 @@ change_pictures_names.brighting_image(path, l_nature, os.path.join(path, r'sorte
 
 l_vegtables=os.listdir(os.path.join(path, r'sorted\not-recycle\vegtables'))
 change_pictures_names.brighting_image(path, l_vegtables, os.path.join(path, r'sorted\not-recycle\vegtables'),'\\not-recycle\\vegtables', int(6000/len(l_vegtables)), "vegtable")
-
+"""
 
 pics = os.listdir(os.path.join(path, r'augmented\recycle\books'))
 pics = [os.path.join(os.path.join(path, r'augmented\recycle\books', p)) for p in pics]
@@ -104,18 +104,13 @@ y_train, x_train = split_train_test_validation.split_x_y(train_total)
 y_test, x_test = split_train_test_validation.split_x_y(test_total)
 y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
 
-for i in range(2):
-    print(x_train[i])
-    x_train[i] = cv2.imread(x_train[i],cv2.IMREAD_GRAYSCALE)
+
+x_train=split_train_test_validation.normalize_pixels(x_train)
+x_test=split_train_test_validation.normalize_pixels(x_test)
+x_validation=split_train_test_validation.normalize_pixels(x_validation)
+
+
     
-    
-"""
-image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-"""
-
-
-
-
 
 
 
