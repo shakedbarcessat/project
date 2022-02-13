@@ -10,6 +10,8 @@ import build_directory
 import split_train_test_validation
 import numpy as np
 import cv2
+import nural_network
+
 
 
 path = r'D:\ShakedProjectY'
@@ -100,6 +102,7 @@ validation_total=split_train_test_validation.train_test_val_total(validation_mea
 validation_total=split_train_test_validation.train_test_val_total(validation_nature, validation_total, False)
 validation_total=split_train_test_validation.train_test_val_total(validation_vegtables, validation_total, True)
 
+
 y_train, x_train = split_train_test_validation.split_x_y(train_total)
 y_test, x_test = split_train_test_validation.split_x_y(test_total)
 y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
@@ -108,6 +111,12 @@ y_validation, x_validation = split_train_test_validation.split_x_y(validation_to
 x_train=split_train_test_validation.normalize_pixels(x_train)
 x_test=split_train_test_validation.normalize_pixels(x_test)
 x_validation=split_train_test_validation.normalize_pixels(x_validation)
+
+
+
+
+
+
 
 
     

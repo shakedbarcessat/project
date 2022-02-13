@@ -63,7 +63,7 @@ def split_x_y(data):
        if(category=="nature"):
             y.append(1)
     return y, x   
- 
+
     
 def normalize_pixels(li):
     for i in range(len(li)):
@@ -75,6 +75,13 @@ def normalize_pixels(li):
         li[i]=final_norm
     li = np.array(li) 
     return li
+
+
+
+
+
+
+
 
 
 
