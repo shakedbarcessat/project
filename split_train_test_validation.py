@@ -67,12 +67,12 @@ def split_x_y(data):
     
 def normalize_pixels(li):
     for i in range(len(li)):
-        li[i] = cv2.imread(li[i],cv2.IMREAD_GRAYSCALE)
+        li[i] = cv2.imread(li[i])
         norm = np.zeros((800,800))
         final = cv2.normalize(li[i],  norm, 0, 255, cv2.NORM_MINMAX)
         final_norm = final.astype('float32')
         final_norm = final_norm / 255.0    
-        li[i]=final_norm
+        li[i]=final_norm.reshape((100, 100, 3))
     li = np.array(li) 
     return li
 

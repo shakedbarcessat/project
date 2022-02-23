@@ -107,14 +107,11 @@ y_train, x_train = split_train_test_validation.split_x_y(train_total)
 y_test, x_test = split_train_test_validation.split_x_y(test_total)
 y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
 
-
 x_train=split_train_test_validation.normalize_pixels(x_train)
 x_test=split_train_test_validation.normalize_pixels(x_test)
 x_validation=split_train_test_validation.normalize_pixels(x_validation)
 
-
-
-
+nural_network.run_model((x_train, y_train), (x_test, y_test), (x_validation, y_validation))
 
 
 
