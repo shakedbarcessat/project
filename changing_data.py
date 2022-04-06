@@ -12,63 +12,63 @@ import numpy as np
 import cv2
 import nural_network
 
-
+#7100 pics each group
 path = r'D:\ShakedProjectY'
 build_directory.build_directories(path)
 """
-
+num=7100
 l_book=os.listdir(os.path.join(path, r'sorted\recycle\books'))
 p = os.path.join(path, r'sorted\recycle\books')
-change_pictures_names.brighting_image(path, l_book, p,'\\recycle\\books', int(2000/len(l_book)), "book")
+change_pictures_names.brighting_image(path, l_book, p,'\\recycle\\books', int(num/len(l_book)), "book")
 
 l_cardboard=os.listdir(os.path.join(path, r'sorted\recycle\cardboard'))
-change_pictures_names.brighting_image(path, l_cardboard, os.path.join(path, r'sorted\recycle\cardboard'),'\\recycle\\cardboard', int(2000/len(l_cardboard)), "cardboard")
+change_pictures_names.brighting_image(path, l_cardboard, os.path.join(path, r'sorted\recycle\cardboard'),'\\recycle\\cardboard', int(num/len(l_cardboard)), "cardboard")
 
 l_glass_bottles=os.listdir(os.path.join(path, r'sorted\recycle\glass bottles'))
-change_pictures_names.brighting_image(path, l_glass_bottles, os.path.join(path, r'sorted\recycle\glass bottles'),'\\recycle\\glass bottles', int(2000/len(l_glass_bottles)), "glass_bottle")
+change_pictures_names.brighting_image(path, l_glass_bottles, os.path.join(path, r'sorted\recycle\glass bottles'),'\\recycle\\glass bottles', int(num/len(l_glass_bottles)), "glass_bottle")
 
 l_newspapers=os.listdir(os.path.join(path, r'sorted\recycle\newspapers'))
-change_pictures_names.brighting_image(path, l_newspapers, os.path.join(path, r'sorted\recycle\newspapers'),'\\recycle\\newspapers', int(2000/len(l_newspapers)), "newspaper")
+change_pictures_names.brighting_image(path, l_newspapers, os.path.join(path, r'sorted\recycle\newspapers'),'\\recycle\\newspapers', int(num/len(l_newspapers)), "newspaper")
 
 l_fruits=os.listdir(os.path.join(path, r'sorted\not-recycle\fruits'))
-change_pictures_names.brighting_image(path, l_fruits, os.path.join(path, r'sorted\not-recycle\fruits'),'\\not-recycle\\fruits', int(2000/len(l_fruits)), "fruit")
+change_pictures_names.brighting_image(path, l_fruits, os.path.join(path, r'sorted\not-recycle\fruits'),'\\not-recycle\\fruits', int(num/len(l_fruits)), "fruit")
 
 l_meat=os.listdir(os.path.join(path, r'sorted\not-recycle\meat'))
-change_pictures_names.brighting_image(path, l_meat, os.path.join(path, r'sorted\not-recycle\meat'),'\\not-recycle\\meat', int(2000/len(l_meat)), "meat")
+change_pictures_names.brighting_image(path, l_meat, os.path.join(path, r'sorted\not-recycle\meat'),'\\not-recycle\\meat', int(num/len(l_meat)), "meat")
 
 l_nature=os.listdir(os.path.join(path, r'sorted\not-recycle\nature'))
-change_pictures_names.brighting_image(path, l_nature, os.path.join(path, r'sorted\not-recycle\nature'),'\\not-recycle\\nature', int(2000/len(l_nature)), "nature")
+change_pictures_names.brighting_image(path, l_nature, os.path.join(path, r'sorted\not-recycle\nature'),'\\not-recycle\\nature', int(num/len(l_nature)), "nature")
 
 l_vegtables=os.listdir(os.path.join(path, r'sorted\not-recycle\vegtables'))
-change_pictures_names.brighting_image(path, l_vegtables, os.path.join(path, r'sorted\not-recycle\vegtables'),'\\not-recycle\\vegtables', int(2000/len(l_vegtables)), "vegtable")
+change_pictures_names.brighting_image(path, l_vegtables, os.path.join(path, r'sorted\not-recycle\vegtables'),'\\not-recycle\\vegtables', int(num/len(l_vegtables)), "vegtable")
 
 
 l_book=os.listdir(os.path.join(path, r'augmented\recycle\books'))
 p = os.path.join(path, r'augmented\recycle\books')
-change_pictures_names.rotating_image(path, l_book, p,'\\recycle\\books', int(2000/len(l_book)), "book")
+change_pictures_names.rotating_image(path, l_book, p,'\\recycle\\books', int(num/len(l_book)), "book")
 
 l_cardboard=os.listdir(os.path.join(path, r'augmented\recycle\cardboard'))
-change_pictures_names.rotating_image(path, l_cardboard, os.path.join(path, r'augmented\recycle\cardboard'),'\\recycle\\cardboard', int(2000/len(l_cardboard)), "cardboard")
+change_pictures_names.rotating_image(path, l_cardboard, os.path.join(path, r'augmented\recycle\cardboard'),'\\recycle\\cardboard', int(num/len(l_cardboard)), "cardboard")
 
 l_glass_bottles=os.listdir(os.path.join(path, r'augmented\recycle\glass bottles'))
-change_pictures_names.rotating_image(path, l_glass_bottles, os.path.join(path, r'augmented\recycle\glass bottles'),'\\recycle\\glass bottles', int(2000/len(l_glass_bottles)), "glass_bottle")
+change_pictures_names.rotating_image(path, l_glass_bottles, os.path.join(path, r'augmented\recycle\glass bottles'),'\\recycle\\glass bottles', int(num/len(l_glass_bottles)), "glass_bottle")
 
 l_newspapers=os.listdir(os.path.join(path, r'augmented\recycle\newspapers'))
-change_pictures_names.rotating_image(path, l_newspapers, os.path.join(path, r'augmented\recycle\newspapers'),'\\recycle\\newspapers', int(2000/len(l_newspapers)), "newspaper")
+change_pictures_names.rotating_image(path, l_newspapers, os.path.join(path, r'augmented\recycle\newspapers'),'\\recycle\\newspapers', int(num/len(l_newspapers)), "newspaper")
 
 l_fruits=os.listdir(os.path.join(path, r'augmented\not-recycle\fruits'))
-change_pictures_names.rotating_image(path, l_fruits, os.path.join(path, r'augmented\not-recycle\fruits'),'\\not-recycle\\fruits', int(2000/len(l_fruits)), "fruit")
+change_pictures_names.rotating_image(path, l_fruits, os.path.join(path, r'augmented\not-recycle\fruits'),'\\not-recycle\\fruits', int(num/len(l_fruits)), "fruit")
 
 l_meat=os.listdir(os.path.join(path, r'augmented\not-recycle\meat'))
-change_pictures_names.rotating_image(path, l_meat, os.path.join(path, r'augmented\not-recycle\meat'),'\\not-recycle\\meat', int(2000/len(l_meat)), "meat")
+change_pictures_names.rotating_image(path, l_meat, os.path.join(path, r'augmented\not-recycle\meat'),'\\not-recycle\\meat', int(num/len(l_meat)), "meat")
 
 l_nature=os.listdir(os.path.join(path, r'augmented\not-recycle\nature'))
-change_pictures_names.rotating_image(path, l_nature, os.path.join(path, r'augmented\not-recycle\nature'),'\\not-recycle\\nature', int(2000/len(l_nature)), "nature")
+change_pictures_names.rotating_image(path, l_nature, os.path.join(path, r'augmented\not-recycle\nature'),'\\not-recycle\\nature', int(num/len(l_nature)), "nature")
 
 l_vegtables=os.listdir(os.path.join(path, r'augmented\not-recycle\vegtables'))
-change_pictures_names.rotating_image(path, l_vegtables, os.path.join(path, r'augmented\not-recycle\vegtables'),'\\not-recycle\\vegtables', int(2000/len(l_vegtables)), "vegtable")
-"""
+change_pictures_names.rotating_image(path, l_vegtables, os.path.join(path, r'augmented\not-recycle\vegtables'),'\\not-recycle\\vegtables', int(num/len(l_vegtables)), "vegtable")
 
+"""
 pics = os.listdir(os.path.join(path, r'final\recycle\books'))
 pics = [os.path.join(os.path.join(path, r'final\recycle\books', p)) for p in pics]
 train_books, test_books, validation_books = split_train_test_validation.split_train_test_val(pics)
@@ -81,8 +81,6 @@ train_glass_bottles, test_glass_bottles, validation_glass_bottles = split_train_
 pics = os.listdir(os.path.join(path, r'final\recycle\newspapers'))
 pics = [os.path.join(os.path.join(path, r'final\recycle\newspapers', p)) for p in pics]
 train_newspapers, test_newspapers, validation_newspapers = split_train_test_validation.split_train_test_val(pics)
-
-
 
 pics = os.listdir(os.path.join(path,r'final\not-recycle\fruits'))
 pics = [os.path.join(os.path.join(path,r'final\not-recycle\fruits', p)) for p in pics]
@@ -128,6 +126,11 @@ validation_total=split_train_test_validation.train_test_val_total(validation_nat
 validation_total=split_train_test_validation.train_test_val_total(validation_vegtables, validation_total, True)
 
 
+def sum(train=train_total, test=test_total, validation=validation_total):
+    train, test, validation= split_train_test_validation.split_train_test_val(train + test + validation)
+    return train, test, validation
+
+
 y_train, x_train = split_train_test_validation.split_x_y(train_total)
 y_test, x_test = split_train_test_validation.split_x_y(test_total)
 y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
@@ -137,56 +140,5 @@ x_test=split_train_test_validation.normalize_pixels(x_test)
 x_validation=split_train_test_validation.normalize_pixels(x_validation)
 
 nural_network.run_model((x_train, y_train), (x_test, y_test), (x_validation, y_validation))
-"""
-pics = os.listdir(os.path.join(path, r'final\recycle\cardboard'))
-pics = [os.path.join(os.path.join(path, r'final\recycle\cardboard', p)) for p in pics]
-train_cardboard, test_cardboard, validation_cardboard =  split_train_test_validation.split_train_test_val(pics)
-
-pics = os.listdir(os.path.join(path,r'final\not-recycle\fruits'))
-pics = [os.path.join(os.path.join(path,r'final\not-recycle\fruits', p)) for p in pics]
-train_fruits, test_fruits, validation_fruits = split_train_test_validation.split_train_test_val(pics)
-
-
-train_total=[]
-
-train_total=split_train_test_validation.train_test_val_total(train_cardboard, train_total, False)
-train_total=split_train_test_validation.train_test_val_total(train_fruits, train_total, False)
-
-
-test_total=[]
-
-test_total=split_train_test_validation.train_test_val_total(test_cardboard, test_total, False)
-test_total=split_train_test_validation.train_test_val_total(test_fruits, test_total, False)
-
-
-validation_total=[]
-
-validation_total=split_train_test_validation.train_test_val_total(validation_cardboard, validation_total, False)
-validation_total=split_train_test_validation.train_test_val_total(validation_fruits, validation_total, False)
-
-
-    
-y_train, x_train = split_train_test_validation.split_x_y(train_total)
-y_test, x_test = split_train_test_validation.split_x_y(test_total)
-y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
-
-x_train=split_train_test_validation.normalize_pixels(x_train)
-x_test=split_train_test_validation.normalize_pixels(x_test)
-x_validation=split_train_test_validation.normalize_pixels(x_validation)
-
-nural_network.run_model((x_train, y_train), (x_test, y_test), (x_validation, y_validation))
-
-"""
-
-
-
-
-
-
-
-
-
-
-
 
 
