@@ -10,7 +10,20 @@ import split_train_test_validation
 
 def take_part(li, precent, number_of_elements):
     """
-    Parameters
+    Takes li and make new list in the size of the elements. The program delets the elements it already used.
+    
+    
+    Parameters:
+    num- the size we want to the new list.
+    new_li- the list we return in the size of num.    
+    ---------
+    input:
+    li- the dataset
+    precent- the precent of the list we want
+    number_of_elements- li size    
+    ---------
+    output:
+    returns a list in the size of the precent.    
     ---------
     """
     num = int(number_of_elements * precent)
@@ -22,7 +35,24 @@ def take_part(li, precent, number_of_elements):
 
 
 def split_train_test_val(li, train = 0.7, test = 0.2, validation = 0.1):
+    """
+    Make 3 new lists of li, which each in the size we got with the function.
     
+    
+    Parameters:    
+    train_data- contains train amount from li.
+    test_data-contains test amount from li.
+    validation_data- contains validation amount from li.
+    input:
+    li- the dataset.  
+    train- the amount of items from li.
+    train- the amount of items from li.
+    train- the amount of items from li.
+    ---------
+    output:
+    Returns train, test and validation   
+    ---------
+    """
     number_of_elements=len(li)
     np.random.seed(7)
     np.random.shuffle(li)
@@ -33,12 +63,43 @@ def split_train_test_val(li, train = 0.7, test = 0.2, validation = 0.1):
 
     
 def train_test_val_total(li, total, sign):
+    """
+    Adding li to the end of total. Shuffles total if sign==true.
+    
+    
+    Parameters:
+    ---------
+    input:
+    li- a list
+    total- the dataset
+    sign- true or false    
+    ---------
+    output:
+    Returns the list total after adding li to the end of total.  
+    ---------
+    """
     total.extend(li)
     if(sign):
         np.random.shuffle(total)
     return total
 
 def split_x_y(data):
+    """
+    The function make labels to each element in data and returns the data and the labels.
+    
+    
+    Parameters: 
+    x- the dataset
+    y- list of labels
+    category- conducts 0 to recycle and 1 to not-recycle.
+    ---------
+    input:
+    data- the dataset.    
+    ---------
+    output:
+    Returns the data and the labels of each place in the data. 
+    ---------
+    """
     x=data
     y=[]
     category=" " 
@@ -66,6 +127,19 @@ def split_x_y(data):
 
     
 def normalize_pixels(li):
+    """
+    The function normalizes li and returns it.
+    
+    
+    Parameters:    
+    ---------
+    input:
+    li- the dataset.    
+    ---------
+    output:
+    Returns a normalized list.    
+    ---------
+    """
     for i in range(len(li)):
         li[i] = cv2.imread(li[i])
         norm = np.zeros((800,800))
