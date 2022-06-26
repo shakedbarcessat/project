@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 """
+Created on Mon Jun 13 16:12:45 2022
+
+@author: Shaked
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Jan 14 09:07:05 2022
 
 @author: Student
 """
 
-import build_directory
+
 import os
 """
 import patoolib
@@ -15,17 +22,7 @@ def check_if_exists(path):
     isExist = os.path.exists(path)
     if not isExist:
         os.makedirs(path)
-
-"""
-def build_directories(path):
-    groups= ["train", "test", "validation", "sorted", "augmented", "final", "out"]
-    recycle_not_recycle= ["recycle", "not-recycle"]
-    classes= ["books", "cardboard", "glass bottles", "plastic bottles", "newspapers", "fruits", "meat", "nature", "vegtables"]
-    for group_ in groups:
-        for rec_ in recycle_not_recycle:
-            for class_ in classes:
-                check_if_exists()
-"""        
+     
 
 def build_directories(path):
     check_if_exists(path)
@@ -111,5 +108,3 @@ def build_directories(path):
     check_if_exists(os.path.join(path, r'final\not-recycle\nature'))
     check_if_exists(os.path.join(path, r'final\not-recycle\vegtables'))
     
-        
-        
