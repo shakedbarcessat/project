@@ -6,7 +6,6 @@ Created on Fri Jan 21 10:26:11 2022
 """
 import numpy as np
 import cv2
-import split_train_test_validation
 
 def take_part(li, precent, number_of_elements):
     """
