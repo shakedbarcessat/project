@@ -129,21 +129,3 @@ def rotating_image(main_path, data, path, location, count, category):
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
