@@ -129,7 +129,6 @@ test_total=split_train_test_validation.train_test_val_total(test_fruits, test_to
 test_total=split_train_test_validation.train_test_val_total(test_meat, test_total, False)
 test_total=split_train_test_validation.train_test_val_total(test_nature, test_total, False)
 test_total=split_train_test_validation.train_test_val_total(test_vegtables, test_total, True)
-    
 validation_total=[]
 validation_total=split_train_test_validation.train_test_val_total(validation_books, validation_total, False)
 validation_total=split_train_test_validation.train_test_val_total(validation_cardboard, validation_total, False)
@@ -140,19 +139,25 @@ validation_total=split_train_test_validation.train_test_val_total(validation_mea
 validation_total=split_train_test_validation.train_test_val_total(validation_nature, validation_total, False)
 validation_total=split_train_test_validation.train_test_val_total(validation_vegtables, validation_total, True)
     
-    
-def sum(train=train_total, test=test_total, validation=validation_total):
-    train, test, validation= split_train_test_validation.split_train_test_val(train + test + validation)
-    return train, test, validation
-        
+      
     
     
 y_train, x_train = split_train_test_validation.split_x_y(train_total)
 y_test, x_test = split_train_test_validation.split_x_y(test_total)
 y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
-    
+
+def send_test_images():
+    return y_test, x_test     
+
 x_train=split_train_test_validation.normalize_pixels(x_train)
 x_test=split_train_test_validation.normalize_pixels(x_test)
-x_validation=split_train_test_validation.normalize_pixels(x_validation)
-    
+x_validation=split_train_test_validation.normalize_pixels(x_validation) 
+ 
+def send_train():
+    return x_train, np.array(y_train), x_validation, np.array(y_validation)
+
+def send_test():
+    return x_test, np.array(y_test)
+"""
 nural_network.run_model((x_train, np.array(y_train)), (x_test, np.array(y_test)), (x_validation, np.array(y_validation)))
+"""
