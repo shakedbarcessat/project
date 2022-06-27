@@ -9,6 +9,7 @@ import nural_network
 from matplotlib import pyplot
 import tensorflow as tf
 import numpy as np
+import os
 
 
 def print_menu():
@@ -18,7 +19,7 @@ def print_menu():
     print("3. Predict an image")
     print("4. Exit")
     choice = input("Enter your choice: ")
-    while(choice.isdigit()==False or (int(choice) < 1) or (int(choice) > 6)):
+    while(choice.isdigit()==False or (int(choice) < 1) or (int(choice) > 4)):
         print("Sorry, this is not a valid input. ")
         choice = input("Please enter your choice again: ")
     return int(choice)
@@ -34,25 +35,34 @@ def option_1(model, trainX, trainY, validationX, validationY):
 def option_2(testX, testY):
     loaded_model = tf.keras.models.load_model('savedmodel/model.h5')
     nural_network.evaluate_model(loaded_model, testX, testY)
+    
 
 
     
 def option_3():
+    isExist = os.path.exists('savedmodel/model.h5')
+    if not isExist:
+        print("Folder does not exist")
+        return
     loaded_model = tf.keras.models.load_model('savedmodel/model.h5')
-    img_num = input("Choose a number between 1 to 120000: ")
+    img_num = input("Choose a number between 1 to 11328: ")
+    if int(img_num)>11328 or int(img_num)<1:
+        print("choose again")
+        return
     i = int(img_num) - 1 #index of the chosen image
     label_images, test_images=changing_data.send_test_images()
     pyplot.imshow(test_images[i])
+    pyplot.show()
     print("You choose to predict ", label_images[i])
     
     img = test_images[i]
-    img = img.reshape(1, 100, 100, 3)
-    img = img / 255.0
+    img = np.expand_dims(img, axis=0)
     
     result = loaded_model.predict(img)
-    print("Prediction is: ",np.argmax(result, axis=1))
+    print(result)
+    print("Prediction is: ",round(float(result)))
     #print(result[0], test_labels_orl[i])
-    if (np.argmax(result, axis=1) == label_images[i]):
+    if (round(float(result)) == label_images[i]):
         print("Prediction is true")
     else:
         print("Prediction is wrong")
@@ -120,3 +130,4 @@ else:
     loaded_model.summary()
 
 """    
+
