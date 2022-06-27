@@ -13,6 +13,17 @@ import os
 
 
 def print_menu():
+    """
+    The function returns the user's choice- between 1 to 4.
+    
+    
+    Parameters:  
+    choice- the choice of the user.
+    ---------
+    output:
+    Returns the user's choice.    
+    ---------
+    """
     print("\nChoose an option")
     print("1. Train the model")
     print("2. Test the model")
@@ -27,12 +38,34 @@ def print_menu():
 
 
 def option_1(model, trainX, trainY, validationX, validationY):
+    """
+    The function trains the model.
+    
+    input:
+    model- the model
+    trainX- the train data
+    trainY- the train labels 
+    validationX- the validation data
+    validationY- the validation labels    
+    ---------
+    """
     nural_network.train_model(model, trainX, trainY, validationX, validationY)
     print("Done! \nThe model is successfully trained.")
-    return True
 
 
 def option_2(testX, testY):
+    """
+    The function tests the loaded model(if exists).
+    
+    
+    Parameters:  
+    loaded_model- the model that exists
+    ---------
+    input:
+    testX- the test data
+    testY- the test labels    
+    ---------
+    """
     loaded_model = tf.keras.models.load_model('savedmodel/model.h5')
     nural_network.evaluate_model(loaded_model, testX, testY)
     
@@ -40,6 +73,19 @@ def option_2(testX, testY):
 
     
 def option_3():
+    """
+    The function predicts an image and prints true if the prediction us right and false if its wrong.
+    
+    
+    Parameters:  
+    isExists- contains true if the saved model exists, and false if not.
+    loaded_model- the model that exists
+    img_num- the number the user chooses.
+    label_images- the labels of the test data
+    test_images- the test data
+    result- contains the model's prediction
+    ---------
+    """
     isExist = os.path.exists('savedmodel/model.h5')
     if not isExist:
         print("Folder does not exist")
