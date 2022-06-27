@@ -37,8 +37,8 @@ def run_model(train, test, validation):
     ---------
     """
     model = define_model()
-    history = train_model(model, train[0], train[1], validation[0], validation[1])
-    evaluate_model(history, test[0], test[1])
+    history, model = train_model(model, train[0], train[1], validation[0], validation[1])
+    evaluate_model(model, test[0], test[1])
     
     
 
@@ -112,7 +112,7 @@ def train_model(model, trainX ,trainY, validationX, validationY):
     Returns the model after fitting it. 
     ---------
     """
-    history = model.fit(trainX, trainY, epochs=2, batch_size=256, validation_data=(validationX, validationY))
+    history = model.fit(trainX, trainY, epochs=20, batch_size=256, validation_data=(validationX, validationY))
     
 
     accuracy = history.history['accuracy']  # each epoch train accuracy
@@ -121,7 +121,7 @@ def train_model(model, trainX ,trainY, validationX, validationY):
     loss = history.history['loss']  # each epoch train loss
     val_loss = history.history['val_loss']  # each epoch validation loss
     
-    epochs_range = range(2)  # a list containing numbers from 0 to the number of epochs-1
+    epochs_range = range(20)  # a list containing numbers from 0 to the number of epochs-1
     plt.figure(figsize=(8, 8))
     
     plt.subplot(1, 2, 1)
@@ -137,7 +137,7 @@ def train_model(model, trainX ,trainY, validationX, validationY):
     plt.title('Training and validation loss')
     plt.show()
 
-    return history
+    return history, model
 
 def evaluate_model(model, testX, testY):
     """
@@ -159,9 +159,12 @@ def evaluate_model(model, testX, testY):
     #the history of accuracies and losses of each epoch throughout the learning phase
     score = model.evaluate(testX, testY, verbose=1)
     print(score)
+    model.summary()
     # Generate a prediction using model.predict() 
     # and calculate it's shape:    
     print("Generate a prediction")
-    prediction = model.predict(testX[:1])
-    print("prediction shape:", prediction.shape)
+    prediction = model.predict(testX)
     #model.save('savedmodel/model.h5')
+    
+    
+    
