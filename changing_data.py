@@ -147,6 +147,13 @@ y_test, x_test = split_train_test_validation.split_x_y(test_total)
 y_validation, x_validation = split_train_test_validation.split_x_y(validation_total)
 
 def send_test_images():
+    """
+    The function sends the test labels and the test data.    
+    ---------
+    output:
+    Returns the test labels and the test data.    
+    ---------
+    """
     return y_test, x_test     
 
 x_train=split_train_test_validation.normalize_pixels(x_train)
@@ -154,9 +161,23 @@ x_test=split_train_test_validation.normalize_pixels(x_test)
 x_validation=split_train_test_validation.normalize_pixels(x_validation) 
  
 def send_train():
+    """
+    The function sends the train and validation labels and the train and validation data.    
+    ---------
+    output:
+    Returns the train and validation labels and the train and validation data.    
+    ---------
+    """
     return x_train, np.array(y_train), x_validation, np.array(y_validation)
 
 def send_test():
+    """
+    The function sends the test labels and the test data.    
+    ---------
+    output:
+    Returns the test labels and the test data.    
+    ---------
+    """
     return x_test, np.array(y_test)
 """
 nural_network.run_model((x_train, np.array(y_train)), (x_test, np.array(y_test)), (x_validation, np.array(y_validation)))
