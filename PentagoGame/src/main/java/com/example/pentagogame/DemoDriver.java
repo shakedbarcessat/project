@@ -12,12 +12,15 @@ public class DemoDriver extends Application {
         launch(args);
     }
 
-    public Board b= new Board();
-    public OpeningScreen v= new OpeningScreen();
+    /**
+     * initialize the controller
+     *
+     * @param primaryStage- the main stage to start the game
+     */
     @Override
     public void start(Stage primaryStage) {
-        ControllerClass c= new ControllerClass();
-        c.init();
-        c.start_Game(primaryStage);
+        ControllerClass c = new ControllerClass();
+        c.init(); //initialize the model and the view
+        c.start_Game(primaryStage); //starts the opening screen
     }
 }

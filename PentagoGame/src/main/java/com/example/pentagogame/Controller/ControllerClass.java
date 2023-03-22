@@ -1,7 +1,7 @@
 package com.example.pentagogame.Controller;
 
 import com.example.pentagogame.Model.Board;
-import com.example.pentagogame.View.Distructions;
+import com.example.pentagogame.View.Instructions;
 import com.example.pentagogame.View.OpeningScreen;
 import com.example.pentagogame.View.TheBoard;
 import javafx.application.Platform;
@@ -9,62 +9,84 @@ import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-
 import java.util.Arrays;
 import java.util.Comparator;
-
 import static javafx.application.Application.launch;
 
 
 public class ControllerClass {
-    private static Board b;
-    private static OpeningScreen pt;
+    private static Board b; //the board of the model
+    private static OpeningScreen pt; //the opening screen of the view
 
-    private int current_turn;
+    private final int NUM_BUTTONS_MINI_BOARD=9;
 
-
-    public ControllerClass() {
-
-    }
+    /**
+     * initializes the class
+     */
     public void init()
     {
         this.b= new Board();
         this.pt=new OpeningScreen();
     }
 
+    /**
+     * starts the game
+     * @param stage- the main stage
+     */
     public void start_Game(Stage stage) {
         this.pt.start(stage);
     }
 
+    /**
+     * exits the game
+     */
     public void setExitButton()
     {
         Platform.exit();
     }
 
+    /**
+     * transfering to board screen
+     * @param stage- the main stage
+     */
     public void transferToBoard(Stage stage)
     {
         TheBoard h= new TheBoard();
         h.start(stage);
     }
 
+    /**
+     * transfer to opening screen
+     * @param stage- the main stage
+     */
     public void transferToOpeningScreen(Stage stage)
     {
         OpeningScreen o= new OpeningScreen();
         o.start(stage);
     }
 
+    /**
+     * transfer to instructions screen
+     * @param stage- the main stage
+     */
     public void transferToDistructions(Stage stage)
     {
-        Distructions h= new Distructions();
+        Instructions h= new Instructions();
         h.start(stage);
     }
 
+    /**
+     * adds a tool to the board(the model), and checks for win or tie.
+     * changes the current turn and checks if the pushed button is legal
+     * @param turn- gets the current turn
+     * @param b- the pushed button
+     * @param check- only if the older player twisted the board
+     * @return- string that indicates if there has benn an error or tie or which player won
+     */
     public String addTool(int turn, Button b, boolean check) {
-        Long board;
         if(check==true){
 
             if(this.b.checkForTie()==true)
-
                 return "Tie!!";
             else if (this.b.checkForWin()==true) {
                 if(turn==0){
@@ -79,8 +101,8 @@ public class ControllerClass {
                     c.setFill(Color.WHITE);
                     b.setGraphic(c);
                     turn=1;
-                    this.b.setPlayer_turn(1);
-                    this.b.change_board(Integer.parseInt(b.getId()));
+                    this.b.setPlayer_turn(1);//switches turn
+                    this.b.change_board(Integer.parseInt(b.getId()));//adding the tool
 
 
                 }
@@ -88,37 +110,29 @@ public class ControllerClass {
                     c.setFill(Color.BLACK);
                     b.setGraphic(c);
                     turn=0;
-                    this.b.setPlayer_turn(0);
-                    this.b.change_board(Integer.parseInt(b.getId()));
+                    this.b.setPlayer_turn(0);//switches turn
+                    this.b.change_board(Integer.parseInt(b.getId()));//adding the tool
 
 
                 }
-                System.out.println("player1: ");
-                System.out.println(Long.toBinaryString(this.b.getPlayer1()));
-                System.out.println("player2: ");
-                System.out.println(Long.toBinaryString(this.b.getPlayer2()));
+//                System.out.println("player1: ");
+//                System.out.println(Long.toBinaryString(this.b.getPlayer1()));
+//                System.out.println("player2: ");
+//                System.out.println(Long.toBinaryString(this.b.getPlayer2()));
             }
             else
-                return "error";
+                return "error"; //trying to add a button in a taken place- invalid move
         }
-        return "";
+        return ""; //continue
     }
 
-//    public int changeTurn(int turn)
-//    {
-//        if(turn==0)
-//        {
-//            turn =1;
-//            this.b.setPlayer_turn(1);
-//        }
-//        else
-//        {
-//            turn =0;
-//            this.b.setPlayer_turn(0);
-//        }
-//        return turn;
-//    }
-
+    /**
+     * rotates the board
+     * @param b- the rotate button that pushed
+     * @param bool- true if didn't twist yet
+     * @param buttons-
+     * @return- returns false in order to allow twisting only once
+     */
     public boolean rotateBoard(Button b, boolean bool, Button [] buttons)
     {
         short player1;
@@ -126,8 +140,8 @@ public class ControllerClass {
         short mask= 0b100000000000000;
         if(bool==true) {
             //Integer.parseInt(b.getId())%2+1
-            int numBoard = 0;
-            int boardRotate = 0;
+            int numBoard = 0;//num of the board to rotate
+            int boardRotate = 0;//rotating right or left
             if (Integer.parseInt(b.getId()) < 2)
                 numBoard = 1;
             else if (Integer.parseInt(b.getId()) > 5)
@@ -140,58 +154,40 @@ public class ControllerClass {
                 boardRotate = 2;
             else
                 boardRotate = 1;
-            this.b.create_mini_board_twist(numBoard, boardRotate);
-            System.out.println("num board: " + numBoard + ", rotate 1 to left and 2 to right: " + boardRotate);
-            System.out.println("player1: rotate");
-            System.out.println(Long.toBinaryString(this.b.getPlayer1()));
-            System.out.println("player2: rotate");
-            System.out.println(Long.toBinaryString(this.b.getPlayer2()));
+            this.b.create_mini_board_twist(numBoard, boardRotate);//twistingin model
+//            System.out.println("num board: " + numBoard + ", rotate 1 to left and 2 to right: " + boardRotate);
+//            System.out.println("player1: rotate");
+//            System.out.println(Long.toBinaryString(this.b.getPlayer1()));
+//            System.out.println("player2: rotate");
+//            System.out.println(Long.toBinaryString(this.b.getPlayer2()));
 
 
-            System.out.println("mini player1 ");
+//            System.out.println("mini player1 ");
             player1= this.b.mask(numBoard, this.b.getPlayer1());
             player2= this.b.mask(numBoard, this.b.getPlayer2());
-            System.out.println(Long.toBinaryString(player1));
-            System.out.println("mini player2 ");
-            System.out.println(Long.toBinaryString(player2));
+//            System.out.println(Long.toBinaryString(player1));
+//            System.out.println("mini player2 ");
+//            System.out.println(Long.toBinaryString(player2));
 
 
-            Arrays.sort(buttons, Comparator.comparingInt(button -> Integer.parseInt(button.getId())));
+            Arrays.sort(buttons, Comparator.comparingInt(button -> Integer.parseInt(button.getId()))); //sorts the array of buttons by id
 
-//            Circle c= new Circle(20);
-//            c.setFill(Color.TRANSPARENT);
-//            for(int i=1+9*(numBoard-1); i<10+9*(numBoard-1); i++)
-//            {
-//                buttons[i-1].setGraphic(c);
-//            }
-//            System.out.println(numBoard);
-
-            //for(int i=1+9*(numBoard-1); i<10+9*(numBoard-1); i++)//player1- white
-            for(int i=1+9*(numBoard-1); i<10+9*(numBoard-1); i++)   //player1- white for(int i=1+9*(numBoard-1); i<10+9*(numBoard-1); i++)//player1- white
+            for(int i=1+NUM_BUTTONS_MINI_BOARD*(numBoard-1); i<NUM_BUTTONS_MINI_BOARD+1+NUM_BUTTONS_MINI_BOARD*(numBoard-1); i++)
             {
                 Circle c= new Circle(20);
-                System.out.println("i: " + i);
-                //System.out.println("very ");
-                //System.out.println(Long.toBinaryString(player1&mask));
-
-                //System.out.println(Long.toBinaryString(mask));
                 if((player1&mask)!=0)
                 {
-                    System.out.println("enter 1");
-                    c.setFill(Color.WHITE);
+                    c.setFill(Color.WHITE); //change to white
                     buttons[i-1].setGraphic(c);
                 }
                 else if((player2&mask)!=0)
                 {
-                    //System.out.println(Long.toBinaryString(player2&mask));
-                    System.out.println("enter 2");
-                    c.setFill(Color.BLACK);
+                    c.setFill(Color.BLACK); //change to black
                     buttons[i-1].setGraphic(c);
                 }
                 else if((player1&mask)==0 && ((player2&mask)==0))
                 {
-                    System.out.println("enter 3");
-                    c.setFill(Color.TRANSPARENT);
+                    c.setFill(Color.TRANSPARENT); //change to empty
                     buttons[i-1].setGraphic(c);
                 }
 
@@ -201,9 +197,6 @@ public class ControllerClass {
         return false;
 
     }
-
-
-
 
     public static void main(String[] args) {
         launch(args);

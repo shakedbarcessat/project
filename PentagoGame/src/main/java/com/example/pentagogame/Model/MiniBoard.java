@@ -1,18 +1,20 @@
 package com.example.pentagogame.Model;
+
 public class MiniBoard {
     private short board_mini;
 
     /**
      * initialize mini board
+     *
      * @param board_mini
      */
-    public MiniBoard(short board_mini)
-    {
-        this.board_mini=board_mini;
+    public MiniBoard(short board_mini) {
+        this.board_mini = board_mini;
     }
 
     /**
      * setter
+     *
      * @param board_mini- setting the mini board
      */
     public void setBoard_mini(short board_mini) {
@@ -21,31 +23,31 @@ public class MiniBoard {
 
     /**
      * getter
+     *
      * @return- getting the mini board
      */
-    public short getBoard_mini()
-    {
+    public short getBoard_mini() {
         return this.board_mini;
     }
 
 
     /**
      * rotates the board left (the variable)
+     *
      * @return- returns the board after rotating left
      */
-    public short rotate_left()
-    {
+    public short rotate_left() {
 
-        final int START_1=6;
-        final int END_1=-3;
-        final int GAP_123=4;
-        final int START_2=4;
-        final int END_2=-5;
-        final int START_3=-2;
-        final int END_3=7;
-        final short MISUH_1=0b100000000000000;
-        final short MISUH_3=0b000000100000000;
-        final short MISUH_2=0b000100000000000;
+        final int START_1 = 6;
+        final int END_1 = -3;
+        final int GAP_123 = 4;
+        final int START_2 = 4;
+        final int END_2 = -5;
+        final int START_3 = -2;
+        final int END_3 = 7;
+        final short MISUH_1 = 0b100000000000000;
+        final short MISUH_3 = 0b000000100000000;
+        final short MISUH_2 = 0b000100000000000;
         final int STRAT_INDEX1 = 8;
         final int START_INDEX2 = 7;
         final int START_INDEX3 = 6;
@@ -59,11 +61,9 @@ public class MiniBoard {
         short index = 0;
         for (int i = START_1; i > END_1; i = i - GAP_123) {
             newx = (short) (x & num);
-            if(i==-2)
-            {
-                newx= (short) (newx<<2);
-            }
-            else
+            if (i == -2) {
+                newx = (short) (newx << 2);
+            } else
                 newx = (short) (newx >> i);
             if (newx == 0) {
                 save = (short) (save & ~(1 << STRAT_INDEX1 + index * LEN_ROW));
@@ -74,8 +74,6 @@ public class MiniBoard {
             index++;
         }
         short level1 = save;
-        System.out.println("first");
-        System.out.println(Long.toBinaryString(level1));
 
 
         x = this.board_mini;
@@ -85,11 +83,9 @@ public class MiniBoard {
         index = 0;
         for (int i = START_2; i > END_2; i = i - GAP_123) {
             newx = (short) (x & num);
-            if (i == -4)
-            {
+            if (i == -4) {
                 newx = (short) (newx << 4);
-            }
-            else
+            } else
                 newx = (short) (newx >>> i);
             if (newx == 0) {
                 save = (short) (save & ~(1 << START_INDEX2 + index * LEN_ROW));
@@ -102,9 +98,6 @@ public class MiniBoard {
         }
 
         short level2 = save;
-        System.out.println("second");
-        System.out.println(Long.toBinaryString(level2));
-
 
 
         x = this.board_mini;
@@ -130,9 +123,6 @@ public class MiniBoard {
 
         }
         short level3 = save;
-        System.out.println("third");
-        System.out.println(Long.toBinaryString(level3));
-
 
 
         short last = 0;
@@ -152,18 +142,17 @@ public class MiniBoard {
             last = (short) (keep | last);
             move = (short) (move >>> 1);
         }
-        System.out.println("total");
-        System.out.println(Long.toBinaryString(last));
+
 
         return last;
     }
 
     /**
      * rotates the board right (the variable)
+     *
      * @return- returns the board after rotating right
      */
-    public short rotate_right()
-    {
+    public short rotate_right() {
         final int SHORT_SIZE = 16;
         final int LEN_ROW = 3;
         final int INDEX_START_ROW1 = 2;
@@ -172,9 +161,9 @@ public class MiniBoard {
         final int START_INDEX2 = 7;
         final int STRAT_INDEX3 = 8;
         final int START_ROW2 = -2;
-        final short MISUH_1=0b100000000000000;
-        final short MISUH_3=0b000000100000000;
-        final short MISUH_2=0b000100000000000;
+        final short MISUH_1 = 0b100000000000000;
+        final short MISUH_3 = 0b000000100000000;
+        final short MISUH_2 = 0b000100000000000;
 
 
         short x = board_mini;

@@ -3,7 +3,6 @@ package com.example.pentagogame.View;
 
 import com.example.pentagogame.Controller.ControllerClass;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,78 +17,106 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 
 public class TheBoard extends Application {
     private final int BOARD_SIZE = 6;
     private final int MINI_BOARD_SIZE = 3;
-
-    private int turn;
-    private boolean bool;
-    private boolean check;
-
-    private boolean gameOver;
-
-    private  boolean error;
-
-    private Label l;
-
-    private ControllerClass controller= new ControllerClass();
+    private final int ROTATE_BUTTONS= 8;
+    private int turn; //the current turn
+    private boolean rotateOnce; //rotating only once
+    private boolean forceRotating; //forcing to rotate
+    private boolean gameOver; //checks for victory ot tie
+    private boolean error; //checks for invalid moves
+    private Label l; //label for current turn and winner or tie
+    private ControllerClass controller = new ControllerClass();//connection to the controller
+    private Button[] buttons = new Button[BOARD_SIZE*BOARD_SIZE]; // create an array to store the buttons- of the board itself
+    private Button[] buttons_rotate = new Button[ROTATE_BUTTONS]; //create an array to store the buttons- of the rotate
 
 
-    public TheBoard()
-    {
-        this.turn=0;
-        this.bool=false;
-        this.check=true;
-        this.gameOver=false;
-        this.error=true;
-       this.l= new Label("player 1\nturn");
+
+
+    /**
+     * initialize the board
+     */
+    public TheBoard() {
+        this.turn = 0;
+        this.rotateOnce = false;
+        this.forceRotating = true;
+        this.gameOver = false;
+        this.error = true;
+        this.l = new Label("player 1\nturn");//the starting player
         l.setPrefSize(80, 80);
         l.setFont(new Font("Arial", 20));
         l.setTranslateX(220);
         l.setTranslateY(150);
     }
 
-    public void setBool(boolean bool) {
-        this.bool = bool;
+    /**
+     * sets the rotate once
+     * @param rotateOnce- rotating only once
+     */
+    public void setRotateOnce(boolean rotateOnce) {
+        this.rotateOnce = rotateOnce;
     }
 
+    /**
+     * sets the turn
+     * @param turn- current turn to change
+     */
     public void setTurn(int turn) {
         this.turn = turn;
     }
 
+    /**
+     * gets the current turn
+     * @return thr current turn
+     */
     public int getTurn() {
         return turn;
     }
 
-    public void setError(boolean b)
-    {
-        this.error=b;
+    /**
+     * sets the error
+     * @param b- invalid move
+     */
+    public void setError(boolean b) {
+        this.error = b;
     }
 
-    public void setCheck(boolean bool) {
-        this.check = bool;
+    /**
+     * sets the force rotating
+     * @param bool
+     */
+    public void setForceRotating(boolean bool) {
+        this.forceRotating = bool;
     }
 
-    public boolean endGame(String s, Button [] b, Button [] b2)
-    {
-        if(s!=""){
-            if(s=="error")
-            {
+    /**
+     * sets the label- the current turn or the winner or tie
+     * @param s
+     */
+    public void setL(String s) {
+        this.l.setText(s);
+    }
+
+    /**
+     * checks if end of game, if yes than retuens the winner or tie, checks if there was an invalid move
+     * @param s- the string that indicates if there was a win, a tie, an error or the rotating worked well
+     * @param b- the buttons of the board
+     * @param b2- the buttons of the rotate
+     * @return true if there was an error or false otherwise
+     */
+    public boolean endGame(String s, Button[] b, Button[] b2) {
+        if (s != "") {
+            if (s == "error") {
                 return true;
-            }
-            else {
+            } else {
                 setL(s);
-                for(int i=0; i<b.length; i++)
-                {
-                    b[i].setDisable(true);
+                for (int i = 0; i < b.length; i++) {
+                    b[i].setDisable(true);//finish game
                 }
-                for(int i=0; i<b2.length; i++)
-                {
-                    b2[i].setDisable(true);
+                for (int i = 0; i < b2.length; i++) {
+                    b2[i].setDisable(true);//finish game
                 }
                 return false;
             }
@@ -97,266 +124,170 @@ public class TheBoard extends Application {
         return false;
     }
 
-
-    public void setL(String s)
+    /**
+     * initializes the board itself
+     * @param primaryStage- the stage to work with
+     */
+    public void initialize_the_board(Stage primaryStage)
     {
-        this.l.setText(s);
-    }
-
-    public void start(Stage primaryStage) {
-        // Create the grid pane
-        GridPane grid = new GridPane();
-        Screen screen= Screen.getPrimary();
+        GridPane grid = new GridPane();//the buttons of the board itself
+        Screen screen = Screen.getPrimary();
         grid.setPadding(new Insets(10));
-        double x= screen.getBounds().getWidth();
-        double y= screen.getBounds().getHeight();
+        double x = screen.getBounds().getWidth();//the screen size
+        double y = screen.getBounds().getHeight();//the screen size
         grid.setHgap(5);
         grid.setVgap(5);
-        Button[] buttons = new Button[36]; // create an array to store the buttons
-        Button[] buttons_rotate=new Button[8];
-        int num=0;
 
-
-
-
-        //Populate the grid with buttons
-        for (int row = 0; row < 6; row++) {
-            for (int col = 0; col < 6; col++) {
+        //initialies the board itself
+        int num = 0;//the id for each button
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
                 Button cell = new Button();
                 cell.setStyle("-fx-background-color: brown;");
                 cell.setPrefSize(80, 80);
-                //Add a white or black circle to the button
-
 
                 Circle circle = new Circle(20);
-                circle.setFill(Color.TRANSPARENT);
+                circle.setFill(Color.TRANSPARENT);//sets the initialization color to TRANSPARENT
                 cell.setGraphic(circle);
-//                if(row==col)
-//                {
-//                    circle.setFill((row + col) % 2 == 0 ? Color.WHITE : Color.BLACK);
-//                    cell.setGraphic(circle);
-//                }
 
-
-                if(row==0 & col==0)
-                {
-                    num=0;
+                if (row == 0 & col == 0) {
+                    num = 0;
+                } else if (col % BOARD_SIZE == 0) {
+                    num = num - MINI_BOARD_SIZE - BOARD_SIZE;
                 }
-                else if(col%BOARD_SIZE==0)
-                {
-                    num=num-MINI_BOARD_SIZE-BOARD_SIZE;
+                if ((col % BOARD_SIZE) == MINI_BOARD_SIZE) { //half board
+                    num = num + BOARD_SIZE;
                 }
-                if((col%BOARD_SIZE)==MINI_BOARD_SIZE){ //half board
-                    num=num+BOARD_SIZE;}
-                if(row==MINI_BOARD_SIZE & col==0)
-                {num=MINI_BOARD_SIZE*BOARD_SIZE;}
+                if (row == MINI_BOARD_SIZE & col == 0) {
+                    num = MINI_BOARD_SIZE * BOARD_SIZE;
+                }
                 num++;
-                cell.setId(Integer.toString(num));
-                //System.out.println(cell.getId());
+                cell.setId(Integer.toString(num));//sets the id
                 cell.setPadding(new Insets(1));
-                grid.add(cell, col, row);
-                buttons[num - 1] = cell;
-                //System.out.println(cell.getId());
+                grid.add(cell, col, row);//adding to the grid
+                buttons[num - 1] = cell;//adding to the array of buttons
 
             }
         }
 
-//        Arrays.sort(buttons, Comparator.comparingInt(button -> Integer.parseInt(button.getId())));
-//
-//        for(int i=0; i<36; i++)
-//        {
-//            System.out.println(buttons[i].getId());
-//        }
-//        Circle b1= (Circle) buttons[0].getGraphic();
-//        buttons[0].setGraphic(buttons[6].getGraphic());
-//        buttons[6].setGraphic(b1);
-
-
-
-//
-
         // Create the border pane and add the grid to the center
         grid.setAlignment(Pos.CENTER);
-        BorderPane borderPane = new BorderPane();
+        BorderPane borderPane = new BorderPane();//the main board
         borderPane.setMaxSize(800, 600);
 // Create a new scene and show the stage
         borderPane.setCenter(grid);
-        String [] paths= new String[2];
-        paths[1]= "C:\\Users\\Shaked\\demo1\\src\\main\\photo1\\photoLeft.png";
-        paths[0]= "C:\\Users\\Shaked\\demo1\\src\\main\\photo2\\photoRight.png";
+        start_rotate_buttons(primaryStage, borderPane); //sets the rotation buttons
+    }
+
+    /**
+     * starts the rotation buttons
+     * @param primaryStage- the stage to work with
+     * @param borderPane- the same borderPane as the board itself
+     */
+    public void start_rotate_buttons(Stage primaryStage, BorderPane borderPane)
+    {
+        Screen screen = Screen.getPrimary();
+        double x = screen.getBounds().getWidth();//the screen size
+        double y = screen.getBounds().getHeight();//the screen size
+        String[] paths = new String[2];
+        paths[1] = "C:\\Users\\Shaked\\demo1\\src\\main\\photo1\\photoLeft.png"; //rotate left photo
+        paths[0] = "C:\\Users\\Shaked\\demo1\\src\\main\\photo2\\photoRight.png"; //rotate right photo
         VBox vBox = new VBox(10); // 10 pixels of spacing between the buttons
 
 
-
-
-
-
-
-
-        for(int i =0; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) { //top left button for miniboard number 1
             Image img = new Image(paths[i]);
             ImageView view = new ImageView(img);
             view.setFitHeight(50);
             view.setPreserveRatio(true);
-            //Creating a Button
             Button button = new Button();
-            //Setting the location of the button
-            button.setTranslateX(200);//200
+            button.setTranslateX(200);
             button.setTranslateY(120);
-            //Setting the size of the button
             button.setPrefSize(50, 50);
-            //Setting a graphic to the button
             button.setGraphic(view);
             vBox.getChildren().add(button);
             button.setId(Integer.toString(i));
-            buttons_rotate[i]=button;
+            buttons_rotate[i] = button; //adding to the array of buttons
         }
 
-        for(int i =0; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) { //buttom left button for miniboard number 3
             Image img = new Image(paths[i]);
             ImageView view = new ImageView(img);
             view.setFitHeight(50);
             view.setPreserveRatio(true);
-            //Creating a Button
             Button button = new Button();
-            //Setting the location of the button
-            button.setTranslateX(200);//200
-            button.setTranslateY(520);//450
-            //Setting the size of the button
+            button.setTranslateX(200);
+            button.setTranslateY(520);
             button.setPrefSize(50, 50);
-            //Setting a graphic to the button
             button.setGraphic(view);
             vBox.getChildren().add(button);
-            button.setId(Integer.toString(i+2));
-            buttons_rotate[i+2]=button;
+            button.setId(Integer.toString(i + 2));
+            buttons_rotate[i + 2] = button;//adding to the array of buttons
         }
-
-
-
-
         vBox.getChildren().add(this.l);
-
-
-
-
-        //Set the alignment of the buttons to the center of the VBox
         vBox.setAlignment(Pos.BOTTOM_LEFT);
-// Set the VBox as the left node of the BorderPane
         vBox.setAlignment(Pos.TOP_LEFT);
-// Set the VBox as the left node of the BorderPane
-        Button exit_button= new Button("EXIT");
+
+
+
+        Button exit_button = new Button("EXIT");//exit button
         exit_button.setPrefSize(120, 50);
         exit_button.setTranslateX(0);
         exit_button.setStyle("-fx-background-color: greenyellow;");
         exit_button.setTranslateY(-350);
-
         exit_button.setOnAction(event -> {
-            controller.setExitButton();
+            controller.setExitButton();//exits the game
         });
-
         vBox.getChildren().add(exit_button);
 
 
-        Button backButton= new Button("Back to Open");
+
+        Button backButton = new Button("Back to Open");///back button
         backButton.setPrefSize(120, 50);
         backButton.setTranslateX(0);
         backButton.setStyle("-fx-background-color: greenyellow;");
         backButton.setTranslateY(-325);
-
-
         backButton.setOnAction(event -> {
-            controller.transferToOpeningScreen(primaryStage);
+            controller.transferToOpeningScreen(primaryStage); //transfers to the opening screen
         });
-
-
         vBox.getChildren().add(backButton);
-
         vBox.setAlignment(Pos.TOP_LEFT);
         borderPane.setLeft(vBox);
 
-        VBox vBox3 = new VBox(10); // 10 pixels of spacing between the buttons
 
-        for(int i =0; i<2; i++)
-        {
+
+        VBox vBox3 = new VBox(10); // 10 pixels of spacing between the buttons
+        for (int i = 0; i < 2; i++) {//top right buttons- for miniboard number 2
             Image img = new Image(paths[i]);
             ImageView view = new ImageView(img);
             view.setFitHeight(50);
             view.setPreserveRatio(true);
-            //Creating a Button
             Button button = new Button();
-            //Setting the location of the button
             button.setTranslateX(-200);//-200
             button.setTranslateY(-480);
-            //Setting the size of the button
             button.setPrefSize(50, 50);
-            //Setting a graphic to the button
             button.setGraphic(view);
             vBox3.getChildren().add(button);
-            button.setId(Integer.toString(i+4));
-            buttons_rotate[i+4]=button;
+            button.setId(Integer.toString(i + 4));
+            buttons_rotate[i + 4] = button; //adding to array buttons
         }
 
-        for(int i =0; i<2; i++)
-        {
+        for (int i = 0; i < 2; i++) {//buttom right buttons- for miniboard number 4
             Image img = new Image(paths[i]);
             ImageView view = new ImageView(img);
             view.setFitHeight(50);
             view.setPreserveRatio(true);
-            //Creating a Button
             Button button = new Button();
-            //Setting the location of the button
             button.setTranslateX(-200);
             button.setTranslateY(-80);
-            //Setting the size of the button
             button.setPrefSize(50, 50);
-            //Setting a graphic to the button
             button.setGraphic(view);
             vBox3.getChildren().add(button);
-            button.setId(Integer.toString(i+6));
-            buttons_rotate[i+6]=button;
+            button.setId(Integer.toString(i + 6));
+            buttons_rotate[i + 6] = button; // adding to the array button
         }
-
-        //Set the alignment of the buttons to the center of the VBox
         vBox3.setAlignment(Pos.TOP_RIGHT);
         vBox3.setAlignment(Pos.BOTTOM_RIGHT);
-// Set the VBox as the left node of the BorderPane
-
-        for (int i = 0; i < 36; i++) {
-            Button b = buttons[i];
-            b.setOnAction(e -> {
-                setError(endGame((controller.addTool(getTurn(), b, this.check)), buttons, buttons_rotate));
-                System.out.println("error: "+ this.error);
-                if(this.error==false){
-                    if (this.turn == 0)
-                        setTurn(1);
-                    else
-                        setTurn(0);
-                    setBool(true);
-                    setCheck(false);
-                }
-            });
-
-        //System.out.println(this.check);
-            for (int j = 0; j < 8; j++) {
-                Button b2 = buttons_rotate[j];
-                b2.setOnAction(e2 -> {
-                    if(this.error==false){
-                        setBool(controller.rotateBoard(b2, this.bool, buttons));
-                        System.out.println("bool: "+ this.bool);
-                        if (getTurn() == 1)
-                            setL("player 2\nturn");
-                        else
-                            setL("player 1\nturn");
-                        setCheck(true);
-                    }
-
-                });
-            }
-        }
-
-
         borderPane.setRight(vBox3);
 
 
@@ -364,15 +295,45 @@ public class TheBoard extends Application {
         Scene scene = new Scene(borderPane, x, y);
         primaryStage.setScene(scene);
         primaryStage.show();
-
-
     }
 
+    /**
+     * starts the game
+     * @param primaryStage- the main stage
+     */
+    public void start(Stage primaryStage) {
+        initialize_the_board(primaryStage); //initializes the board
 
+        for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
+            Button b = buttons[i];
+            b.setOnAction(e -> {
+                setError(endGame((controller.addTool(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
+                if (this.error == false) {//valid move
+                    if (this.turn == 0)
+                        setTurn(1);//change turn
+                    else
+                        setTurn(0);
+                    setRotateOnce(true);
+                    setForceRotating(false);
+                }
+            });
 
+            for (int j = 0; j < ROTATE_BUTTONS; j++) {
+                Button b2 = buttons_rotate[j];
+                b2.setOnAction(e2 -> {
+                    if (this.error == false) {
+                        setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
+                        if (getTurn() == 1)
+                            setL("player 2\nturn");//sets player turn
+                        else
+                            setL("player 1\nturn");
+                        setForceRotating(true);
+                    }
 
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
+                });
+            }
+        }
+
+    }
 
 }
