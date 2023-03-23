@@ -17,6 +17,10 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class TheBoard extends Application {
     private final int BOARD_SIZE = 6;
@@ -32,8 +36,20 @@ public class TheBoard extends Application {
     private Button[] buttons = new Button[BOARD_SIZE*BOARD_SIZE]; // create an array to store the buttons- of the board itself
     private Button[] buttons_rotate = new Button[ROTATE_BUTTONS]; //create an array to store the buttons- of the rotate
 
+    Integer[] rightBold = new Integer[]{3,6,24,27};//contains buttons to bold in right side
+    Integer[] leftBold = new Integer[]{10,13,31,34};//contains buttons to bold in left side
+    Integer[] upBold = new Integer[]{29,30,19,20};//contains buttons to bold in up
+    Integer[] downBold = new Integer[]{7,8,17,18};//contains buttons to bold in down
 
+    List<Integer> right = new ArrayList<>(Arrays.asList(rightBold));
+    List<Integer> left = new ArrayList<>(Arrays.asList(leftBold));
+    List<Integer> up = new ArrayList<>(Arrays.asList(upBold));
+    List<Integer> down = new ArrayList<>(Arrays.asList(downBold));
 
+    private final int RIGHT_DOWN_BOLD=9;
+    private final int RIGHT_UP_BOLD=21;
+    private final int LEFT_DOWN_BOLD=16;
+    private final int LEFT_UP_BOLD=28;
 
     /**
      * initialize the board
@@ -142,14 +158,12 @@ public class TheBoard extends Application {
         int num = 0;//the id for each button
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                Button cell = new Button();
-                cell.setStyle("-fx-background-color: brown;");
-                cell.setPrefSize(80, 80);
 
+                Button cell = new Button();
+                cell.setPrefSize(80, 80);
                 Circle circle = new Circle(20);
                 circle.setFill(Color.TRANSPARENT);//sets the initialization color to TRANSPARENT
                 cell.setGraphic(circle);
-
                 if (row == 0 & col == 0) {
                     num = 0;
                 } else if (col % BOARD_SIZE == 0) {
@@ -164,6 +178,51 @@ public class TheBoard extends Application {
                 num++;
                 cell.setId(Integer.toString(num));//sets the id
                 cell.setPadding(new Insets(1));
+                if(right.contains(Integer.parseInt(cell.getId()))|left.contains(Integer.parseInt(cell.getId()))|
+                        up.contains(Integer.parseInt(cell.getId()))|down.contains(Integer.parseInt(cell.getId()))){
+                    if(right.contains(Integer.parseInt(cell.getId())))//right bold
+                    {
+                        cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                                "    -fx-border-width: 0 7px 0 0;");
+                    }
+                    else if(left.contains(Integer.parseInt(cell.getId())))//left bold
+                    {
+                        cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                                "    -fx-border-width: 0 0 0 7px;");
+                    }
+                    else if(up.contains(Integer.parseInt(cell.getId())))//up bold
+                    {
+                        cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                                "    -fx-border-width: 7px 0 0 0;");
+                    }
+                    else if(down.contains(Integer.parseInt(cell.getId())))//down bold
+                    {
+                        cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                                "    -fx-border-width: 0 0 7px 0;");
+                    }
+
+                }
+                else if(Integer.parseInt(cell.getId())==RIGHT_DOWN_BOLD)
+                {
+                    cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                            "    -fx-border-width: 0 7px 7px 0;");
+                }
+                else if(Integer.parseInt(cell.getId())==LEFT_DOWN_BOLD)
+                {
+                    cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                            "    -fx-border-width: 0 0 7px 7px;");
+                }
+                else if(Integer.parseInt(cell.getId())==RIGHT_UP_BOLD)
+                {
+                    cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                            "    -fx-border-width: 7px 7px 0 0;");
+                } else if (Integer.parseInt(cell.getId())==LEFT_UP_BOLD) {
+                    cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
+                            "    -fx-border-width:  7px 0 0 7px;");
+                }
+                else {
+                    cell.setStyle("-fx-background-color: brown;");//regular buttons
+                }
                 grid.add(cell, col, row);//adding to the grid
                 buttons[num - 1] = cell;//adding to the array of buttons
 
