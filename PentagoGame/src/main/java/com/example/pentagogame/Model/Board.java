@@ -231,6 +231,26 @@ public class Board {
         if (((board & diag4Mask) == diag4Mask) || (board & (diag4Mask2)) == diag4Mask2)
             return true;
 
+
+        long theTripleWin =  0b010001000000000100000000000010001000000000000000000000000000000L;
+        long theTripleWin2 = 0b000100010000000000001000000000100010000000000000000000000000000L;
+        long theTripleWin3 =  0b000000001010100000010100000000000000000000000000000000000000000L;
+        long theTripleWin4 =  0b000000000000001010000001010100000000000000000000000000000000000L;
+
+        if (((board & theTripleWin) == theTripleWin))
+            return true;
+        if (((board & theTripleWin2) == theTripleWin2))
+            return true;
+        if (((board & theTripleWin3) == theTripleWin3))
+            return true;
+        if (((board & theTripleWin4) == theTripleWin4))
+            return true;
+
+
+
+
+
+
         return false;
     }
 
