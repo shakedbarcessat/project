@@ -3,6 +3,7 @@ package com.example.pentagogame.Model;
 public class Board {
     private long player1; //the board from player1 point of view
     private long player2; //the board from player2 point of view
+    private long aiPlayer; //ai player
     private int player_turn; //the current turn
 
     private long[] masks = new long[]{0b111111111000000000000000000000000000000000000000000000000000000L,
@@ -43,6 +44,13 @@ public class Board {
     /**
      * getter
      *
+     * @return- returns ai board
+     */
+    public long getAiPlayer(){return this.aiPlayer;}
+
+    /**
+     * getter
+     *
      * @return- returns current player turn
      */
     public int getPlayer_turn() {
@@ -66,6 +74,13 @@ public class Board {
     public void setPlayer2(long player2) {
         this.player2 = player2;
     }
+
+    /**
+     * setter
+     *
+     * @param ai- setting ai board
+     */
+    public void setAiPlayer(long ai){this.aiPlayer=ai;}
 
     /**
      * setter
@@ -187,8 +202,16 @@ public class Board {
         long mask1 = 0b111000000110000000000000000000000000000000000000000000000000000L;
         long mask2 = 0b011000000111000000000000000000000000000000000000000000000000000L;
         for (int row = 0; row < 6; row++) {
-            long rowBits1 = (mask1 >> (row * 6));
-            long rowBits2 = (mask2 >> (row * 6));
+            long rowBits1=0;
+            long rowBits2=0;
+            if(row<3){
+                rowBits1 = (mask1 >> (row * 3));
+                rowBits2 = (mask2 >> (row * 3));}
+            else {
+                rowBits1 = (mask1 >> (9+row * 3));
+                rowBits2 = (mask2 >> (9+row * 3));
+            }
+
             if (((board & rowBits1) == rowBits1) || ((board & rowBits2) == rowBits2)) {
                 return true;
             }
@@ -214,26 +237,22 @@ public class Board {
 
         // Check for diagonal wins
         long diag1Mask = 0b100010001000000000000000000100010000000000000000000000000000000L;
-        long diag1Mask2 = diag1Mask >> 1;
         long diag2Mask = 0b000010001000000000000000000100010001000000000000000000000000000L;
-        long diag2Mask2 = diag2Mask << 1;
-        if (((board & diag1Mask) == diag1Mask) || (board & (diag1Mask2)) == diag1Mask2)
+        if (((board & diag1Mask) == diag1Mask))
             return true;
-        if (((board & diag2Mask) == diag2Mask) || (board & (diag2Mask2)) == diag2Mask2)
+        if (((board & diag2Mask) == diag2Mask))
             return true;
 
         long diag3Mask = 0b000000000001010100001010000000000000000000000000000000000000000L;
-        long diag3Mask2 = diag3Mask << 1;
         long diag4Mask = 0b000000000000010100001010100000000000000000000000000000000000000L;
-        long diag4Mask2 = diag4Mask >> 1;
-        if (((board & diag3Mask) == diag3Mask) || (board & (diag3Mask2)) == diag3Mask2)
+        if (((board & diag3Mask) == diag3Mask))
             return true;
-        if (((board & diag4Mask) == diag4Mask) || (board & (diag4Mask2)) == diag4Mask2)
+        if (((board & diag4Mask) == diag4Mask))
             return true;
 
 
-        long theTripleWin =  0b010001000000000100000000000010001000000000000000000000000000000L;
-        long theTripleWin2 = 0b000100010000000000001000000000100010000000000000000000000000000L;
+        long theTripleWin =   0b010001000000000100000000000010001000000000000000000000000000000L;
+        long theTripleWin2 =  0b000100010000000000001000000000100010000000000000000000000000000L;
         long theTripleWin3 =  0b000000001010100000010100000000000000000000000000000000000000000L;
         long theTripleWin4 =  0b000000000000001010000001010100000000000000000000000000000000000L;
 

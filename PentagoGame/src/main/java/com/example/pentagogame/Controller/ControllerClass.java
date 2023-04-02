@@ -29,6 +29,11 @@ public class ControllerClass {
         this.pt=new OpeningScreen();
     }
 
+    public Board getB()
+    {
+        return this.b;
+    }
+
     /**
      * starts the game
      * @param stage- the main stage
@@ -52,6 +57,19 @@ public class ControllerClass {
     public void transferToBoard(Stage stage)
     {
         TheBoard h= new TheBoard();
+        OpeningScreen.num=0; //hVSh
+        h.start(stage);
+    }
+
+
+    /**
+     * transfering to AI board screen
+     * @param stage- the main stage
+     */
+    public void transferToAI(Stage stage)
+    {
+        TheBoard h= new TheBoard();
+        OpeningScreen.num=1; //aiVSh
         h.start(stage);
     }
 
@@ -197,6 +215,50 @@ public class ControllerClass {
         return false;
 
     }
+
+
+//    public String addTool(int turn, int index, boolean check) {
+//        if(check==true){
+//
+//            if(this.b.checkForTie()==true)
+//                return "Tie!!";
+//            else if (this.b.checkForWin()==true) {
+//                if(turn==0){
+//                    return "player2 \nwon!!";}
+//                else{
+//                    return "player1 \nwon!!";}
+//            }
+//
+//            Circle c = (Circle) b.getGraphic();
+//            if (c.getFill() == Color.TRANSPARENT) {
+//                if (turn == 0) {
+//                    c.setFill(Color.WHITE);
+//                    b.setGraphic(c);
+//                    turn=1;
+//                    this.b.setPlayer_turn(1);//switches turn
+//                    this.b.change_board(Integer.parseInt(b.getId()));//adding the tool
+//
+//
+//                }
+//                else {
+//                    c.setFill(Color.BLACK);
+//                    b.setGraphic(c);
+//                    turn=0;
+//                    this.b.setPlayer_turn(0);//switches turn
+//                    this.b.change_board(Integer.parseInt(b.getId()));//adding the tool
+//
+//
+//                }
+////                System.out.println("player1: ");
+////                System.out.println(Long.toBinaryString(this.b.getPlayer1()));
+////                System.out.println("player2: ");
+////                System.out.println(Long.toBinaryString(this.b.getPlayer2()));
+//            }
+//            else
+//                return "error"; //trying to add a button in a taken place- invalid move
+//        }
+//        return ""; //continue
+//    }
 
     public static void main(String[] args) {
         launch(args);

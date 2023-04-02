@@ -1,6 +1,7 @@
 package com.example.pentagogame.View;
 
 
+import com.example.pentagogame.AiPlayer;
 import com.example.pentagogame.Controller.ControllerClass;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -362,35 +363,41 @@ public class TheBoard extends Application {
      */
     public void start(Stage primaryStage) {
         initialize_the_board(primaryStage); //initializes the board
-
-        for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++) {
-            Button b = buttons[i];
-            b.setOnAction(e -> {
-                setError(endGame((controller.addTool(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
-                if (this.error == false) {//valid move
-                    if (this.turn == 0)
-                        setTurn(1);//change turn
-                    else
-                        setTurn(0);
-                    setRotateOnce(true);
-                    setForceRotating(false);
-                }
-            });
-
-            for (int j = 0; j < ROTATE_BUTTONS; j++) {
-                Button b2 = buttons_rotate[j];
-                b2.setOnAction(e2 -> {
-                    if (this.error == false) {
-                        setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
-                        if (getTurn() == 1)
-                            setL("player 2\nturn");//sets player turn
+        if(OpeningScreen.num==0) { //hVSh
+            for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+                Button b = buttons[i];
+                b.setOnAction(e -> {
+                    setError(endGame((controller.addTool(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
+                    if (this.error == false) {//valid move
+                        if (this.turn == 0)
+                            setTurn(1);//change turn
                         else
-                            setL("player 1\nturn");
-                        setForceRotating(true);
+                            setTurn(0);
+                        setRotateOnce(true);
+                        setForceRotating(false);
                     }
-
                 });
+
+                for (int j = 0; j < ROTATE_BUTTONS; j++) {
+                    Button b2 = buttons_rotate[j];
+                    b2.setOnAction(e2 -> {
+                        if (this.error == false) {
+                            setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
+                            if (getTurn() == 1)
+                                setL("player 2\nturn");//sets player turn
+                            else
+                                setL("player 1\nturn");
+                            setForceRotating(true);
+                        }
+
+                    });
+                }
             }
+        }
+        else if(OpeningScreen.num==1){ //aiVSh
+            AiPlayer a= new AiPlayer();
+            a.setBoard_ai(0b000011L);
+            System.out.println(Long.toBinaryString(controller.getB().getAiPlayer()));
         }
 
     }

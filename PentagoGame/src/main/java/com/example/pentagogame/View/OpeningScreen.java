@@ -17,9 +17,12 @@ public class OpeningScreen extends Application {
 
     private ControllerClass controller = new ControllerClass(); //connection to the controller
 
+    public static int num=0; //0- hVSh, 1- aiVSh
+
     public static void main(String[] args) {
         launch(args);
     }
+
 
     /**
      * //initializes the opening screen
@@ -49,6 +52,11 @@ public class OpeningScreen extends Application {
         aiVSh.setPrefSize(350, 75);
         aiVSh.setTranslateX(-200);
         aiVSh.setTranslateY(0);
+
+
+        aiVSh.setOnAction(event -> {
+            controller.transferToAI(primaryStage);//transfers to the AI board screen
+        });
 
 
         Button instructions = new Button("Instructions");
