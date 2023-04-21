@@ -18,9 +18,11 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 
 public class TheBoard extends Application {
@@ -32,6 +34,14 @@ public class TheBoard extends Application {
     private boolean forceRotating; //forcing to rotate
     private boolean gameOver; //checks for victory ot tie
     private boolean error; //checks for invalid moves
+
+    private boolean winning=false;
+
+    private int mini_board;
+
+    private int index;
+
+    private int rotating;
     private Label l; //label for current turn and winner or tie
     private ControllerClass controller = new ControllerClass();//connection to the controller
     private Button[] buttons = new Button[BOARD_SIZE*BOARD_SIZE]; // create an array to store the buttons- of the board itself
@@ -46,6 +56,8 @@ public class TheBoard extends Application {
     List<Integer> left = new ArrayList<>(Arrays.asList(leftBold));
     List<Integer> up = new ArrayList<>(Arrays.asList(upBold));
     List<Integer> down = new ArrayList<>(Arrays.asList(downBold));
+
+    Random random = new Random();
 
     private final int RIGHT_DOWN_BOLD=9;
     private final int RIGHT_UP_BOLD=21;
@@ -124,10 +136,12 @@ public class TheBoard extends Application {
      * @return true if there was an error or false otherwise
      */
     public boolean endGame(String s, Button[] b, Button[] b2) {
+        System.out.println(s);
         if (s != "") {
             if (s == "error") {
                 return true;
             } else {
+                this.winning=true;
                 setL(s);
                 for (int i = 0; i < b.length; i++) {
                     b[i].setDisable(true);//finish game
@@ -250,8 +264,15 @@ public class TheBoard extends Application {
         double x = screen.getBounds().getWidth();//the screen size
         double y = screen.getBounds().getHeight();//the screen size
         String[] paths = new String[2];
-        paths[1] = "C:\\Users\\Shaked\\demo1\\src\\main\\photo1\\photoLeft.png"; //rotate left photo
-        paths[0] = "C:\\Users\\Shaked\\demo1\\src\\main\\photo2\\photoRight.png"; //rotate right photo
+
+        File file = new File("src/main/photo1/photoLeft.png");
+        String filePath = file.getAbsolutePath();
+
+        File file2 = new File("src/main/photo2/photoRight.png");
+        String filePath2 = file2.getAbsolutePath();
+
+        paths[1] = filePath; //rotate left photo
+        paths[0] = filePath2; //rotate right photo
         VBox vBox = new VBox(10); // 10 pixels of spacing between the buttons
 
 
@@ -262,7 +283,7 @@ public class TheBoard extends Application {
             view.setPreserveRatio(true);
             Button button = new Button();
             button.setTranslateX(200);
-            button.setTranslateY(120);
+            button.setTranslateY(220);
             button.setPrefSize(50, 50);
             button.setGraphic(view);
             vBox.getChildren().add(button);
@@ -277,7 +298,7 @@ public class TheBoard extends Application {
             view.setPreserveRatio(true);
             Button button = new Button();
             button.setTranslateX(200);
-            button.setTranslateY(520);
+            button.setTranslateY(400);
             button.setPrefSize(50, 50);
             button.setGraphic(view);
             vBox.getChildren().add(button);
@@ -324,7 +345,7 @@ public class TheBoard extends Application {
             view.setPreserveRatio(true);
             Button button = new Button();
             button.setTranslateX(-200);//-200
-            button.setTranslateY(-480);
+            button.setTranslateY(-400);//-480 -700
             button.setPrefSize(50, 50);
             button.setGraphic(view);
             vBox3.getChildren().add(button);
@@ -339,7 +360,7 @@ public class TheBoard extends Application {
             view.setPreserveRatio(true);
             Button button = new Button();
             button.setTranslateX(-200);
-            button.setTranslateY(-80);
+            button.setTranslateY(-180); //-150 -300
             button.setPrefSize(50, 50);
             button.setGraphic(view);
             vBox3.getChildren().add(button);
@@ -355,6 +376,94 @@ public class TheBoard extends Application {
         Scene scene = new Scene(borderPane, x, y);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public void ai_play(AiPlayer a)
+    {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Button b;
+        if (this.turn == 1) {
+            a.setPlayers();
+            AiPlayer.player_move++;
+            System.out.println("turn: " + turn);
+            System.out.println("move " + AiPlayer.player_move);
+            a.triple_power_play();
+            mini_board = AiPlayer.mini_board_for_twist;
+            index = AiPlayer.index;
+            rotating = AiPlayer.direction_rotating;
+            System.out.println("index: " + index);
+            System.out.println("mini board: " + mini_board);
+            if (rotating == 1)
+                System.out.println("left");
+            else System.out.println("right");
+            System.out.println(this.turn);
+            b = buttons[index - 1];
+            System.out.println("id    " + b.getId());
+            System.out.println("board ai before");
+            System.out.println(Long.toBinaryString(a.getBoard_ai()));
+//            setForceRotating(true);
+            System.out.println(this.forceRotating);
+            setError(endGame((controller.addToolAI(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
+            if(this.winning==false) {
+                a.setPlayers();
+                System.out.println("board ai");
+                System.out.println(Long.toBinaryString(a.getBoard_ai()));
+                System.out.println("board player1");
+                System.out.println(Long.toBinaryString(a.getPlayer1()));
+                if (this.error == false) {//valid move
+                    if (this.turn == 0)
+                        setTurn(1);//change turn
+                    else
+                        setTurn(0);
+                    setRotateOnce(true);
+                    setForceRotating(false);
+                }
+                Button b2;
+                if (mini_board == 1) {
+                    if (rotating == 1)
+                        b2 = buttons_rotate[1];
+                    else
+                        b2 = buttons_rotate[0];
+                } else if (mini_board == 2) {
+                    if (rotating == 1)
+                        b2 = buttons_rotate[5];
+                    else
+                        b2 = buttons_rotate[4];
+                } else if (mini_board == 3) {
+                    if (rotating == 1)
+                        b2 = buttons_rotate[3];
+                    else
+                        b2 = buttons_rotate[2];
+                } else {
+                    if (rotating == 1)
+                        b2 = buttons_rotate[7];
+                    else
+                        b2 = buttons_rotate[6];
+                }
+
+                if (this.error == false) {
+                    if (getTurn() == 0) //still not human
+                    {
+                        setRotateOnce(controller.rotateBoardAi(true, mini_board,
+                                rotating, this.rotateOnce, b2, buttons));//rotating the miniboard
+                    } else {
+                        setRotateOnce(controller.rotateBoardAi(false, 0,
+                                0, this.rotateOnce, b2, buttons));//rotating the miniboard
+                    }
+                    if (getTurn() == 1)
+                        setL("ai\nturn");//sets player turn
+                    else
+                        setL("player 1\nturn");
+                    setForceRotating(true);
+                }
+            }
+
+        }
+
     }
 
     /**
@@ -394,10 +503,73 @@ public class TheBoard extends Application {
                 }
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
         else if(OpeningScreen.num==1){ //aiVSh
             AiPlayer a= new AiPlayer();
-            a.setBoard_ai(0b000011L);
-            System.out.println(Long.toBinaryString(controller.getB().getAiPlayer()));
+            this.turn=1;
+            ai_play(a);
+            for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+                Button b;
+//                System.out.println("turn: " + turn);
+//                System.out.println("move " + AiPlayer.player_move);
+                b = buttons[i];
+//                System.out.println(i);
+                b.setOnAction(e -> {
+                    setError(endGame((controller.addToolAI(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
+                    System.out.println(this.error);
+//                    System.out.println("the current ai: ");
+//                    System.out.println(Long.toBinaryString(a.getBoard_ai()));
+                    if (this.error == false) {//valid move
+                        if (this.turn == 0)
+                            setTurn(1);//change turn
+                        else
+                            setTurn(0);
+                        setRotateOnce(true);
+                        setForceRotating(false);
+                    }
+                    System.out.println(turn);
+                });
+
+                for (int j = 0; j < ROTATE_BUTTONS; j++) {
+                    Button b2 = buttons_rotate[j];
+                    b2.setOnAction(e2 -> {
+                        System.out.println("error: "+ error);
+                        if (this.error == false) {
+                            if (getTurn() == 1) //still not ai
+                            {
+                                setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                            if (getTurn() == 1){
+                                setL("ai\nturn");//sets player turn
+                                setForceRotating(true);
+                                ai_play(a);
+                            }
+                            else
+                                setL("player 1\nturn");
+                            setForceRotating(true);
+                        }
+                    });
+                }
+            }
+
+
+
         }
 
     }

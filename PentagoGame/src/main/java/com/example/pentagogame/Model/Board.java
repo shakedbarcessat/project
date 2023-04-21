@@ -6,6 +6,8 @@ public class Board {
     private long aiPlayer; //ai player
     private int player_turn; //the current turn
 
+    private boolean ai_use= false;
+
     private long[] masks = new long[]{0b111111111000000000000000000000000000000000000000000000000000000L,
             0b000000000111111111000000000000000000000000000000000000000000000L,
             0b000000000000000000111111111000000000000000000000000000000000000L,
@@ -20,6 +22,7 @@ public class Board {
     public Board() {
         this.player1 = 0;
         this.player2 = 0;
+        this.aiPlayer =0;
         this.player_turn = 1;
     }
 
@@ -55,6 +58,15 @@ public class Board {
      */
     public int getPlayer_turn() {
         return this.player_turn;
+    }
+
+    /**
+     * setter
+     *
+     * @param ai_use- setting that there is a use of ai
+     */
+    public void setAi_use(boolean ai_use) {
+        this.ai_use = ai_use;
     }
 
     /**
@@ -287,4 +299,322 @@ public class Board {
         }
         return false;
     }
+
+
+    public long [] rotate_whole(int mini_board1, int mini_board2)
+    {
+        long [] players= new long[2];
+        if(mini_board1==2 & mini_board2==4)
+        {
+            create_mini_board_twist(2, 1);
+            create_mini_board_twist(4, 1);
+
+            long masking_36= 0b111111111111111111111111111111111111000000000000000000000000000L;
+            long mini_board_second= getPlayer2()<<9;
+
+            mini_board_second=mini_board_second>>>27;
+            mini_board_second=mini_board_second&masking_36;
+
+
+            mini_board_second=mini_board_second<<27;
+
+
+            long mini_board_fourth = getPlayer2()<<27;
+
+            mini_board_fourth=mini_board_fourth>>>9;
+
+            setPlayer2(mini_board_second | mini_board_fourth);
+
+
+
+
+//            System.out.println(Long.toBinaryString(getPlayer1()));
+            mini_board_second= getPlayer1()<<9;
+//            System.out.println(Long.toBinaryString(mini_board_second));
+
+            mini_board_second=mini_board_second>>>27;
+//            System.out.println(Long.toBinaryString(mini_board_second));
+            mini_board_second=mini_board_second&masking_36;
+//            System.out.println(Long.toBinaryString(mini_board_second));
+
+
+            mini_board_second=mini_board_second<<27;
+//            System.out.println(Long.toBinaryString(mini_board_second));
+
+
+            mini_board_fourth = getPlayer1()<<27;
+//            System.out.println(Long.toBinaryString(mini_board_fourth));
+
+            mini_board_fourth=mini_board_fourth>>>9;
+//            System.out.println(Long.toBinaryString(mini_board_fourth));
+
+            setPlayer1(mini_board_second | mini_board_fourth);
+
+
+        }
+        else if(mini_board1==1 & mini_board2==3)
+        {
+            create_mini_board_twist(1, 2);
+            create_mini_board_twist(3, 2);
+
+
+            long masking_36= 0b111111111111111111111111111111111111000000000000000000000000000L;
+            long mini_board_first= getPlayer2()>>>27;
+            mini_board_first=mini_board_first&masking_36;
+            mini_board_first=mini_board_first<<18;
+
+
+            long mini_board_third = getPlayer2()<<18;
+            mini_board_third=mini_board_third>>>27;
+            mini_board_third=mini_board_third&masking_36;
+            mini_board_third=mini_board_third<<27;
+            setPlayer2(mini_board_first | mini_board_third);
+
+
+
+//            System.out.println(Long.toBinaryString(getPlayer1()));
+
+            mini_board_first= getPlayer1()>>>27;
+//            System.out.println(Long.toBinaryString(mini_board_first));
+            mini_board_first=mini_board_first&masking_36;
+//            System.out.println(Long.toBinaryString(mini_board_first));
+            mini_board_first=mini_board_first<<18;
+//            System.out.println(Long.toBinaryString(mini_board_first));
+
+
+            mini_board_third = getPlayer1()<<18;
+//            System.out.println(Long.toBinaryString(mini_board_third));
+            mini_board_third=mini_board_third>>>27;
+//            System.out.println(Long.toBinaryString(mini_board_third));
+            mini_board_third=mini_board_third&masking_36;
+//            System.out.println(Long.toBinaryString(mini_board_third));
+            mini_board_third=mini_board_third<<27;
+//            System.out.println(Long.toBinaryString(mini_board_third));
+            setPlayer1(mini_board_first | mini_board_third);
+//            System.out.println(Long.toBinaryString(mini_board_third));
+
+//
+//            setPlayer2(getPlayer2()>>>9);
+//            setPlayer1(getPlayer1()>>>9);
+//
+//
+//            long NineBits1 = (long) (getPlayer1() << 27); // Shift right by 55 bits to get the first 9 bits of long1
+//            long NineBits2 = (long) (getPlayer2() << 27); // Shift right by 55 bits to get the first 9 bits of long1
+//            setPlayer1(NineBits1 | getPlayer1());
+//            setPlayer2(NineBits2 | getPlayer2());
+
+//            System.out.println(Long.toBinaryString(getPlayer1()));
+//            System.out.println(Long.toBinaryString(getPlayer2()));
+        }
+        else if(mini_board1==3 & mini_board2==4)
+        {
+
+            setPlayer1(getPlayer1()<<18);
+            setPlayer2(getPlayer2()<<18);
+            mirroring();
+
+//            System.out.println("dfgfhgjhkj");
+            System.out.println(Long.toBinaryString(getPlayer1()));
+            System.out.println(Long.toBinaryString(getPlayer2()));
+        }
+        players[0]=getPlayer1();
+        players[1]=getPlayer2();
+        return players;
+    }
+
+
+
+
+    public int rotate_whole_opp(int index, int mini_board1, int mini_board2)
+    {
+        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+        Board b;
+        if(mini_board1==2 & mini_board2==4)
+        {
+            long id_mask = (mask >>> (index - 1));
+            id_mask = id_mask >>>9;
+            long new_mask = (long) (id_mask << 18);
+            new_mask = (long) (new_mask >>>27);
+            if(new_mask ==0){
+                b= new Board();
+                b.setPlayer1(0);
+                b.setPlayer2(id_mask);
+            }
+            else {b= new Board();
+                b.setPlayer1(0);
+                b.setPlayer2(new_mask);
+            }
+
+            b.create_mini_board_twist(2, 2);
+            b.create_mini_board_twist(4, 2);
+
+            int count=1;
+            while((mask & b.getPlayer2()) ==0)
+            {
+                count++;
+                mask=mask>>>1;
+            }
+            return count;
+        }
+
+
+
+
+
+        else if(mini_board1==1 & mini_board2==3)
+        {
+            mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+            long id_mask = (mask >>> (index - 1));
+            long new_mask = (long) id_mask >>>27;
+            new_mask = new_mask <<9;
+            id_mask = id_mask <<9;
+            long mask_total= id_mask | new_mask;
+
+            if(mask_total==0){
+                b= new Board();
+                b.setPlayer1(0);
+                b.setPlayer2(id_mask);
+            }
+            else {
+                b= new Board();
+                b.setPlayer1(0);
+                b.setPlayer2(mask_total);}
+            b.create_mini_board_twist(1, 1);
+            b.create_mini_board_twist(3, 1);
+
+            int count=1;
+            while((mask & b.getPlayer2()) ==0)
+            {
+                count++;
+                mask=mask>>>1;
+            }
+            return count;
+        }
+
+
+        else if(mini_board1==3 & mini_board2==4)
+        {
+            mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+            long id_mask = (mask >>> (index - 1));
+            long save_player2=getPlayer2();
+            long save_player1=getPlayer1();
+            setPlayer2(id_mask);
+//            System.out.println(Long.toBinaryString(id_mask));
+            mirroring();
+            long get= getPlayer2()>>>18;
+//            System.out.println(Long.toBinaryString(get));
+
+            setPlayer2(save_player2);
+            setPlayer1(save_player1);
+            int count=1;
+            while((mask & get) ==0)
+            {
+                count++;
+                mask=mask>>>1;
+            }
+            return count;
+
+        }
+        return 1;
+    }
+
+
+    public void mirroring ()
+    {
+        System.out.println(Long.toBinaryString(getPlayer2()));
+        long keep_it=getPlayer2();
+        long [] players= new long[2];
+        long mask= 0b100000000000000000000000000000000000000000000000000000000000000L;
+
+        for(int i=0; i<2; i++)
+        {
+            for(int j=0; j<9; j++)
+            {
+                if(j<3)
+                {
+                    if((mask & keep_it)!=0)
+                    {
+                        if((getPlayer2() & mask >>>(6))==0) {
+                            setPlayer2(getPlayer2() | mask >>> (6));
+                            System.out.println("i " + i + " j " + j);
+                            System.out.println(Long.toBinaryString(getPlayer2()));
+
+
+                            setPlayer2(getPlayer2() ^ mask);
+                            System.out.println("i " + i + " j " + j);
+                            System.out.println(Long.toBinaryString(getPlayer2()));
+                        }
+
+                    }
+                } else if (j>5)
+                {
+
+                    if((mask & keep_it)!=0) {
+                        if((getPlayer2() & mask <<(6))==0) {
+
+                            setPlayer2(getPlayer2() | mask << (6));
+                            System.out.println("i " + i + " j " + j);
+                            System.out.println(Long.toBinaryString(getPlayer2()));
+
+                            setPlayer2(getPlayer2() ^ mask);
+                            System.out.println("i " + i + " j " + j);
+                            System.out.println(Long.toBinaryString(getPlayer2()));
+                        }
+                    }
+
+                }
+
+                mask=mask>>>1;
+            }
+        }
+
+
+
+
+
+
+
+
+        mask= 0b100000000000000000000000000000000000000000000000000000000000000L;
+        keep_it=getPlayer1();
+
+        for(int i=0; i<2; i++)
+        {
+            for(int j=0; j<9; j++)
+            {
+                if(j<3)
+                {
+                    if((mask & keep_it)!=0)
+                    {
+                        setPlayer1(getPlayer1() | mask >>>(6));
+                        System.out.println("i "+ i+ " j " + j);
+                        System.out.println(Long.toBinaryString(getPlayer1()));
+
+
+                        setPlayer1(getPlayer1() ^ mask);
+                        System.out.println("i "+ i+ " j " + j);
+                        System.out.println(Long.toBinaryString(getPlayer1()));
+
+                    }
+                } else if (j>5)
+                {
+                    if((mask & keep_it)!=0) {
+                        setPlayer1(getPlayer1() | mask << (6));
+                        System.out.println("i " + i + " j " + j);
+                        System.out.println(Long.toBinaryString(getPlayer1()));
+
+                        setPlayer1(getPlayer1() ^ mask);
+                        System.out.println("i " + i + " j " + j);
+                        System.out.println(Long.toBinaryString(getPlayer1()));
+                    }
+
+                }
+
+                mask=mask>>>1;
+            }
+        }
+    }
+
+
+
 }

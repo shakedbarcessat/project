@@ -13,10 +13,11 @@ import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 public class OpeningScreen extends Application {
 
     private ControllerClass controller = new ControllerClass(); //connection to the controller
-
     public static int num=0; //0- hVSh, 1- aiVSh
 
     public static void main(String[] args) {
@@ -103,7 +104,14 @@ public class OpeningScreen extends Application {
         board.setCenter(v);
         board.setLeft(v2);
 
-        Image image = new Image("C:\\Users\\Shaked\\demo1\\src\\main\\ph\\pentago1.jpg");//adding background image
+
+
+
+        File file = new File("src/main/ph/pentago1.jpg");
+        String filePath = file.getAbsolutePath();
+        Image image = new Image(filePath);//adding background image
+
+
 
 
         // Set the background image

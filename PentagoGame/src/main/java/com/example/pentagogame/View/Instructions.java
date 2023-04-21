@@ -14,6 +14,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 public class Instructions extends Application {
     private ControllerClass controller = new ControllerClass();//connection to the controller
 
@@ -53,7 +55,9 @@ public class Instructions extends Application {
 
 
 
-        Image i = new Image("C:\\Users\\Shaked\\demo1\\src\\main\\photob\\צילום מסך 2023-03-06 210855.png");//adding a photo
+        File file = new File("src/main/photob/צילום מסך 2023-03-06 210855.png");
+        String filePath = file.getAbsolutePath();
+        Image i = new Image(filePath);//adding a photo
         ImageView imageView = new ImageView(i);
 
 

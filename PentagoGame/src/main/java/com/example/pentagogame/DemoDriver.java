@@ -11,6 +11,7 @@ public class DemoDriver extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
     /**
      * initialize the controller
      *
