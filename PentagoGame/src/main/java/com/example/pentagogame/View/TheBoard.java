@@ -138,7 +138,6 @@ public class TheBoard extends Application {
                 return true;
             } else {
                 this.winning=true;
-                System.out.println(this.winning);
                 setLa(s);
                 for (int i = 0; i < b.length; i++) {
                     b[i].setDisable(true);//finish game
@@ -401,6 +400,8 @@ public class TheBoard extends Application {
                 index = AiPlayer.index_defence; //the index to add the trophy
                 rotating = AiPlayer.direction_rotating_defence; //the direction to rotate
                 AiPlayer.player_move--; //the straight five wasn't chosen
+
+
             } else if (grade3>grade2 & grade3>grade1) { //the straight five chosen
                 mini_board = AiPlayer.mini_board_for_twist_straight_five; //the mini board to twist
                 index = AiPlayer.index_straight_five; //the index to add the trophy

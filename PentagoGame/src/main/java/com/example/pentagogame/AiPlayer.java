@@ -34,6 +34,32 @@ public class AiPlayer {
             0b100100100110000000000000000000000000000000000000000000000000000L,
             0b001001001110000000000000000000000000000000000000000000000000000L};
 
+    private long[] masks_boards_12_2 = {0b000111000000110000000000000000000000000000000000000000000000000L,
+            0b000111000010010000000000000000000000000000000000000000000000000L,
+            0b000111000000010010000000000000000000000000000000000000000000000L,
+            0b010010010000110000000000000000000000000000000000000000000000000L,
+            0b010010010000110000000000000000000000000000000000000000000000000L,
+
+            0b000011000000111000000000000000000000000000000000000000000000000L,
+            0b000011000010010010000000000000000000000000000000000000000000000L,
+            0b000011000010010010000000000000000000000000000000000000000000000L,
+            0b010010000000111000000000000000000000000000000000000000000000000L,
+            0b000010010000111000000000000000000000000000000000000000000000000L};
+
+
+
+    private long[] masks_boards_12_3 = {0b000000111000000110000000000000000000000000000000000000000000000L,
+            0b000000111100100000000000000000000000000000000000000000000000000L,
+            0b000000111000001001000000000000000000000000000000000000000000000L,
+            0b001001001000000110000000000000000000000000000000000000000000000L,
+            0b100100100000000110000000000000000000000000000000000000000000000L,
+
+            0b000000011000000111000000000000000000000000000000000000000000000L,
+            0b000000011100100100000000000000000000000000000000000000000000000L,
+            0b000000011001001001000000000000000000000000000000000000000000000L,
+            0b001001000000000111000000000000000000000000000000000000000000000L,
+            0b000100100000000111000000000000000000000000000000000000000000000L};
+
     private int[] mini_board_12 = {rand.nextInt(2) + 3, 2, 2, 1, 1};
     private int[] mini_board_24 = {rand.nextInt(2) * 2 + 1, 4, 4, 2, 2};
     private int[] mini_board_34 = {rand.nextInt(2) +1, 4, 4, 3, 3};
@@ -47,6 +73,11 @@ public class AiPlayer {
     private int[][] indexes = {{2, 11, 3, 10, 12}, {2, 15, 3, 12, 18}, {2, 13, 3, 10, 16}, {4, 11, 1, 10, 12}, {6, 11, 9, 10, 12},
             {2, 11, 3, 10, 1}, {2, 15, 3, 12, 1}, {2, 13, 3, 16, 1}, {4, 11, 1, 10, 7}, {6, 11, 9, 10, 3}};
 
+    private int [][] indexes_2= {{5, 14, 4, 6, 13}, {5, 14, 4, 6, 11}, {5, 14, 4, 6, 17}, {5, 14, 2, 8, 17}, {5, 14, 2, 8, 17},
+                                    {5, 14, 6, 13, 15}, {5, 14, 6, 11, 17}, {5, 14, 6, 11, 17}, {5, 14, 2, 13, 15}, {5, 14, 7, 13, 15}};
+
+    private int [][] indexes_3= {{8, 17, 7, 9, 16}, {8, 13, 7, 9, 10}, {8, 15, 7, 9, 18}, {6, 17, 3, 9, 16}, {4, 17, 1, 7, 16},
+                                 {8, 17, 9, 16, 18}, {8, 13, 9, 10, 16}, {8, 15, 9, 12, 18}, {6, 17, 3, 16, 18}, {4, 17, 7, 16, 18}};
     private int[] twist_mini_boards_12 = {rand.nextInt(2) + 1, 1, 2, 2, 1};
     private int[] twist_mini_boards_34 = {rand.nextInt(2) + 1,2, 1, 1, 2};
 
@@ -273,253 +304,223 @@ public class AiPlayer {
         // Check for horizontal wins
         index_defence=0;
         mini_board_for_twist_defence=0;
-        long mask1 = 0b111000000110000000000000000000000000000000000000000000000000000L;
-        long mask2 = 0b011000000111000000000000000000000000000000000000000000000000000L;
-        for (int row = 0; row < 6; row++) {
-            long rowBits1 = 0;
-            long rowBits2 = 0;
-            if (row < 3) {
-                rowBits1 = (mask1 >> (row * 3));
-                rowBits2 = (mask2 >> (row * 3));
-            } else {
-                rowBits1 = (mask1 >> (MINI_BOARD_SIZE + row * 3));
-                rowBits2 = (mask2 >> (MINI_BOARD_SIZE + row * 3));
-            }
+        check_4_finish =false; //check if there is 4 in a row
+        check_3_finish=false; //check if there is 3 in a row
+        int [][][]indexes_total= {indexes, indexes_2, indexes_3};
+        long [][]masks_total = {masks_boards_12, masks_boards_12_2, masks_boards_12_3};
 
-            int count1 = 0;//count how many 1 are in the board for each way of winning - the first mask
-            int count2 = 0;//count how many 1 are in the board for each way of winning - the second mask
-            long mask = 0b100000000000000000000000000000000000000000000000000000000000000L; //check for next place to put the ball
-            mask = mask >> (row * 3);
-            String new_bits1 = Long.toBinaryString(board & rowBits1);
-            String new_bits2 = Long.toBinaryString(board & rowBits2);
-            long new_bits_ai1 = ai & rowBits1; //check if the ai already defending - the first mask
-            long new_bits_ai2 = ai & rowBits2; //check if the ai already defending - the second mask
-            count2 = count_1(new_bits2);
-            count1 = count_1(new_bits1);
+        for(int z=0; z<3; z++) {
 
-            if ((count1 > 2 && new_bits_ai1 == 0)) {//need defence - the first mask
-                need_defence=true;
-                boolean found_empty_place = false; //check if already found an index
-                if (row == 3) {
-                    index_defence = (ROW_SIZE * row);
-                    mask = mask >> (MINI_BOARD_SIZE);
-                } else if (row > 3) {
-                    index_defence = (3 * row + MINI_BOARD_SIZE);
-                    mask = mask >> (MINI_BOARD_SIZE);
-                } else index_defence = (3 * row);
-                for (int i = 0; i < ROW_SIZE; i++) {
-                    if (found_empty_place == false) {
-                        if (row < 3) {
-                            if (index_defence == (row * 3 + 3)) {
-                                mask = mask >> ROW_SIZE;
-                                index_defence = index_defence + ROW_SIZE;
-                            }
-                        }
-                        if (row > 2) {
-                            if (index_defence == ((row * 3) + 12)) {
-                                mask = mask >> ROW_SIZE;
-                                index_defence = index_defence + ROW_SIZE;
-                            }
-                        }
-                        index_defence++;
-                        if ((mask & (board & rowBits1)) == 0) { //found an index
-                            found_empty_place = true;
-                            mini_board_for_twist_defence = calc_mini_board_horizontal(index_defence); //calc the mini board to twist
-                        }
-                        mask = mask >> 1; //continue to next bit
-                    }
+            for (int x = 0; x < 4; x++) {
+                long keep_ai = ai;
+                long keep_player1 = player1;
+                Board b = new Board();
+                b.setPlayer1(player1);
+                b.setPlayer2(ai);
+                if (x > 0) {
+                    long[] players = b.rotate_whole(mini_boards_to_twist_whole[x - 1][0], mini_boards_to_twist_whole[x - 1][1]);
+                    keep_ai = players[1];
+                    keep_player1 = players[0];
                 }
-
-            } else if ((count2 > 2 && new_bits_ai2 == 0)) {//need defence
-                need_defence=true;
-                mask = 0b010000000000000000000000000000000000000000000000000000000000000L;
-                if (row < 3) {
-                    mask = mask >> (row * 3);
-                    index_defence = (3 * row) + 1;
-                } else if (row == 3) {
-                    index_defence = (ROW_SIZE * row) + 1;
-                    mask = mask >> (MINI_BOARD_SIZE + row * 3);
-                } else {
-                    index_defence = (3 * row + 10);
-                    mask = mask >> (MINI_BOARD_SIZE + row * 3);
-                }
-                boolean found_empty_place = false;
-                for (int i = 0; i < ROW_SIZE; i++) {
-                    if (found_empty_place == false) {
-                        if (row < 3) {
-                            if (index_defence == (row * 3 + 3)) {
-                                mask = mask >> ROW_SIZE;
-                                index_defence = index_defence + ROW_SIZE;
+                for (int i = 0; i < 10; i++) {
+                    if (count_1(Long.toBinaryString(keep_player1 & masks_total[z][i])) == 4 & count_1(Long.toBinaryString(keep_ai & masks_total[z][i])) == 0) { //not found
+                        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+                        for (int j = 0; j < 5; j++) {
+                            if (check_4_finish == false & ((mask >>> (indexes_total[z][i][j] - 1)) & keep_player1) == 0) {
+                                index_defence = indexes_total[z][i][j];
+                                if (x > 0) {
+                                    index_defence = b.rotate_whole_opp(index_defence, mini_boards_to_twist_whole[x - 1][0], mini_boards_to_twist_whole[x - 1][1]);//the right index
+                                }
+                                mini_board_for_twist_defence = this.mini_board[x][(i % 5)]; //the mini board to twist
+                                if (x == 2) {
+                                    direction_rotating_defence = this.twist_mini_boards_34[(i % 5)]; //the direction to rotate
+                                } else
+                                    direction_rotating_defence = this.twist_mini_boards_12[(i % 5)]; //the direction to rotate
+                                check_4_finish = true;
+                                return 100;
                             }
                         }
-                        if (row > 2) {
-                            if (index_defence == ((row * 3) + 12)) {
-                                mask = mask >> ROW_SIZE;
-                                index_defence = index_defence + ROW_SIZE;
-                            }
-                        }
-                        index_defence++;
-                        if ((mask & (board & rowBits2)) == 0) {
-                            found_empty_place = true;
-                            mini_board_for_twist_defence = calc_mini_board_horizontal(index_defence);
-                        }
-                        mask = mask >> 1;
                     }
                 }
             }
         }
 
 
-        if(need_defence==false) {
-            // Check for vertical wins
-            long colMask1 = 0b100100100000000000100100000000000000000000000000000000000000000L;
-            long colMask2 = 0b000100100000000000100100100000000000000000000000000000000000000L;
-            long colMask3 = 0b000000000100100100000000000100100000000000000000000000000000000L;
-            long colMask4 = 0b000000000000100100000000000100100100000000000000000000000000000L;
-            long mask = 0;
-            mini_board_for_twist_defence = 0;
-            index_defence = 0;
-            for (int col = 0; col < 3; col++) {
-                long colBits1 = (colMask1 >> (col));
-                long colBits2 = (colMask2 >> (col));
-                long colBits3 = (colMask3 >> (col));
-                long colBits4 = (colMask4 >> (col));
-
-                String new_bits1 = Long.toBinaryString(board & colBits1);
-                String new_bits2 = Long.toBinaryString(board & colBits2);
-                String new_bits3 = Long.toBinaryString(board & colBits3);
-                String new_bits4 = Long.toBinaryString(board & colBits4);
-
-                long new_bits_ai1 = ai & colBits1;//check if already defending
-                long new_bits_ai2 = ai & colBits2;//check if already defending
-                long new_bits_ai3 = ai & colBits3;//check if already defending
-                long new_bits_ai4 = ai & colBits4;//check if already defending
-
-                int count1 = count_1(new_bits1);//count how many 1 are in the board for each way of winning - the first mask
-                int count2 = count_1(new_bits2);//count how many 1 are in the board for each way of winning - the second mask
-                int count3 = count_1(new_bits3);//count how many 1 are in the board for each way of winning - the third mask
-                int count4 = count_1(new_bits4);//count how many 1 are in the board for each way of winning - the fourth mask
-
-
-                Long masks[] = {0b100000000000000000000000000000000000000000000000000000000000000L,
-                        0b000100000000000000000000000000000000000000000000000000000000000L,
-                        0b000000000100000000000000000000000000000000000000000000000000000L,
-                        0b000000000000100000000000000000000000000000000000000000000000000L};
-                int start_indexex[] = {1, 4, 10, 13};
-                int middle_indexes[] = {19, 19, 28, 28};
-                int counts[] = {count1, count2, count3, count4};
-                Long boards[] = {colBits1, colBits2, colBits3, colBits4};
-                Long ai_masks[] = {new_bits_ai1, new_bits_ai2, new_bits_ai3, new_bits_ai4};
-                int indexes_for_1[] = {3, 2, 3, 2};
-                int indexes_for_2[] = {2, 3, 2, 3};
-
-
-                for (int i = 0; i < 4; i++) {
-                    if ((counts[i] > 2 && ai_masks[i] == 0)) { //need defending - mask 1
-                        need_defence = true;
-                        mask = masks[i]; //find the next index to put the ball
-                        mask = mask >> (col);
-                        index_defence = start_indexex[i] + col;
-                        boolean found = false;
-                        for (int j = 0; j < indexes_for_1[i]; j++) {
-                            if (found == false) {
-                                if ((mask & (board & boards[i])) == 0) { //found an index for defending
-                                    found = true;
-                                    mini_board_for_twist_defence = calc_mini_board_vertical(index_defence); //the mini board to twist
-                                } else index_defence = index_defence + 3;
-                                mask = mask >> 3;
+        if (check_4_finish == false) {
+            for(int z=0; z<3; z++) {
+                for (int x = 0; x < 4; x++) {
+                    long keep_ai = ai;
+                    long keep_player1 = player1;
+                    Board b = new Board();
+                    b.setPlayer1(player1);
+                    b.setPlayer2(ai);
+                    if (x > 0) {
+                        long[] players = b.rotate_whole(mini_boards_to_twist_whole[x - 1][0], mini_boards_to_twist_whole[x - 1][1]);
+                        keep_ai = players[1];
+                        keep_player1 = players[0];
+                    }
+                    for (int i = 0; i < 10; i++) {
+                        if (count_1(Long.toBinaryString(keep_player1 &masks_total[z][i])) == 3 & count_1(Long.toBinaryString(keep_ai & masks_total[z][i])) == 0) { //0 opponents
+                            long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+                            for (int j = 0; j < 5; j++) {
+                                if (((mask >>> (indexes_total[z][i][j] - 1)) & keep_ai) == 0 & ((mask >>> (indexes_total[z][i][j] - 1)) & keep_player1) == 0) { //not taken
+                                    need_defence = true;
+                                    index_defence = indexes_total[z][i][j];
+                                    if (x > 0) {
+                                        index_defence = b.rotate_whole_opp(index_defence, mini_boards_to_twist_whole[x - 1][0], mini_boards_to_twist_whole[x - 1][1]); //the right index
+                                    }
+                                    mini_board_for_twist_defence = this.mini_board[x][(i % 5)]; //the mini board to twist
+                                    if (x == 2) {
+                                        direction_rotating_defence = this.twist_mini_boards_34[(i % 5)]; //the direction to rotate
+                                    } else
+                                        direction_rotating_defence = this.twist_mini_boards_12[(i % 5)]; //the direction to rotate
+                                    check_3_finish = true; //already found
+                                }
                             }
-                        }
-                        if (found == false) {
-                            mask = mask >> 9;
-                            index_defence = middle_indexes[i] + col;
-                        }
-                        for (int j = 0; j < indexes_for_2[i]; j++) {
-                            if (found == false) {
-                                if ((mask & (board & boards[i])) == 0) { //found an index for defending
-                                    found = true;
-                                    mini_board_for_twist_defence = calc_mini_board_vertical(index_defence);//the mini board to twist
-                                } else index_defence = index_defence + 3;
-                                mask = mask >> 3;
-                            }
+
                         }
                     }
                 }
             }
         }
+
+
 
 
         if(need_defence==false) {
             // Check for diagonal wins
-            long diag1Mask = 0b100010001000000000000000000100010000000000000000000000000000000L;
-            long diag2Mask = 0b000010001000000000000000000100010001000000000000000000000000000L;
-            long diag3Mask = 0b000000000001010100001010000000000000000000000000000000000000000L;
-            long diag4Mask = 0b000000000000010100001010100000000000000000000000000000000000000L;
-            long mask = 0;
-            mini_board_for_twist_defence = 0;
-            index_defence = 0;
+            int[] twist_mini_boards = {rand.nextInt(2) + 1, rand.nextInt(2) + 1, 2, 1};
+            int[] mini_boards_1 = {rand.nextInt(2) + 2, 1, 4, 4};
+            int[] mini_boards_2 = {rand.nextInt(2) + 2, 4, 1, 1};
 
-            String new_bits1 = Long.toBinaryString(board & diag1Mask);
-            String new_bits2 = Long.toBinaryString(board & diag2Mask);
-            String new_bits3 = Long.toBinaryString(board & diag3Mask);
-            String new_bits4 = Long.toBinaryString(board & diag4Mask);
+            long[][] masks_diagonal1 = {{0b100010001000000000000000000100010000000000000000000000000000000L,
+                    0b001010100000000000000000000100010000000000000000000000000000000L,
+                    0b100010001000000000000000000000010100000000000000000000000000000L,
+                    0b100010001000000000000000000001010000000000000000000000000000000L},
 
-            long new_bits_ai1 = ai & diag1Mask;//check if already defending
-            long new_bits_ai2 = ai & diag2Mask;//check if already defending
-            long new_bits_ai3 = ai & diag3Mask;//check if already defending
-            long new_bits_ai4 = ai & diag4Mask;//check if already defending
+                    {0b000010001000000000000000000100010001000000000000000000000000000L,
+                            0b000010001000000000000000000001010010000000000000000000000000000L,
+                            0b001010000000000000000000000100010001000000000000000000000000000L,
+                            0b000010100000000000000000000100010001000000000000000000000000000L}};
 
-            int count1 = count_1(new_bits1);//count how many 1 are in the board for each way of winning - the first mask
-            int count2 = count_1(new_bits2);//count how many 1 are in the board for each way of winning - the second mask
-            int count3 = count_1(new_bits3);//count how many 1 are in the board for each way of winning - the third mask
-            int count4 = count_1(new_bits4);//count how many 1 are in the board for each way of winning - the fourth mask
+            int [] [] indexes_1= {{5, 32, 1, 9, 28}, {5, 32, 3, 7, 28}, {5, 32, 1, 9, 34}, {5, 32, 1, 9, 30}};
+            int [] [] indexes2= {{5, 32, 9, 28, 36}, {5, 32, 9, 30, 34}, {5, 32, 3, 28, 36}, {5, 32, 7, 28, 36}};
 
-            Long masks[] = {0b100000000000000000000000000000000000000000000000000000000000000L,
-                    0b000010000000000000000000000000000000000000000000000000000000000L,
-                    0b000000000001000000000000000000000000000000000000000000000000000L,
-                    0b000000000000010000000000000000000000000000000000000000000000000L};
-            int start_indexex[] = {1, 5, 12, 14}; //index to start
-            int middle_indexes[] = {28, 28, 21, 21}; //changed mini board index
-            int counts[] = {count1, count2, count3, count4}; //the counts
-            Long boards[] = {diag1Mask, diag2Mask, diag3Mask, diag4Mask}; //the mask
-            Long ai_masks[] = {new_bits_ai1, new_bits_ai2, new_bits_ai3, new_bits_ai4}; //the ai mask
-            int indexes_for_1[] = {3, 2, 3, 2}; // for loop
-            int indexes_for_2[] = {2, 3, 2, 3}; //for loop
-            int indexes_gap[] = {4, 4, 2, 2}; //the gap between the indexes
-            int indexes_shift[] = {15, 15, 3, 3}; //the shift between the mini boards
+            check_4_finish = false; //check if there is 4 in a row
+            check_3_finish = false; //check if there is 3 in a row
+            long keep_ai = ai;
+            long keep_player1 = player1;
 
-            for (int i = 0; i < 4; i++) {
-                if ((counts[i] > 2 && ai_masks[i] == 0)) { //need defending - mask 1
-                    need_defence = true;
-                    mask = masks[i]; //find the next index to put the ball
-                    index_defence = start_indexex[i];
-                    boolean found = false;
-                    for (int j = 0; j < indexes_for_1[i]; j++) {
-                        if (found == false) {
-                            if ((mask & (board & boards[i])) == 0) { //found an index for defending
-                                found = true;
-                                mini_board_for_twist_defence = calc_mini_board_diagonal(index_defence); //the mini board to twist
-                            } else index_defence = index_defence + indexes_gap[i];
-                            mask = mask >> indexes_gap[i];
+            int [][][]index_total={indexes_1, indexes2};
+            int [][]mini_boards_total= {mini_boards_1, mini_boards_2};
+
+            for(int i=0; i<2; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) == 4 & count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 0) { //0 opponents
+                        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+                        for (int z = 0; z < 5; z++) {
+                            if ((check_4_finish == false) & ((mask >>> (index_total[i][j][z] - 1)) & keep_ai) == 0 & ((mask >>> (index_total[i][j][z] - 1)) & keep_player1) == 0) { //not taken
+                                need_defence = true;
+                                index_defence = index_total[i][j][z];
+                                mini_board_for_twist_defence = mini_boards_total[i][j]; //the mini board to twist
+                                direction_rotating_defence = twist_mini_boards[j]; //the direction to rotate
+                                check_4_finish = true; //already found
+                                return 100;
+                            }
                         }
-                    }
-                    if (found == false) {
-                        mask = mask >> indexes_shift[i];
-                        index_defence = middle_indexes[i];
-                    }
-                    for (int j = 0; j < indexes_for_2[i]; j++) {
-                        if (found == false) {
-                            if ((mask & (board & boards[i])) == 0) { //found an index for defending
-                                found = true;
-                                mini_board_for_twist_defence = calc_mini_board_diagonal(index_defence);//the mini board to twist
-                            } else index_defence = index_defence + indexes_gap[i];
-                            mask = mask >> indexes_gap[i];
-                        }
-                    }
 
+                    }
                 }
             }
+            for(int i=0; i<2; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) == 3 & count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 0) { //0 opponents
+                        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+                        for (int z = 0; z < 5; z++) {
+                            if ((check_3_finish == false) & ((mask >>> (index_total[i][j][z]- 1)) & keep_ai) == 0 & ((mask >>> (index_total[i][j][z] - 1)) & keep_player1) == 0) { //not taken
+                                need_defence = true;
+                                index_defence = index_total[i][j][z];
+                                mini_board_for_twist_defence =mini_boards_total[i][j]; //the mini board to twist
+                                direction_rotating_defence = twist_mini_boards[j]; //the direction to rotate
+                                check_3_finish = true; //already found
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+            int []mini_boards_3 = {rand.nextInt(2) * 3 + 1, 1, 3, 3};
+            int []mini_boards_4 = {rand.nextInt(2) * 3 + 1, 3, 1, 1};
+
+            long[][] masks_diagonal2 = {{0b000000000001010100001010000000000000000000000000000000000000000L,
+                                         0b000000000100010001001010000000000000000000000000000000000000000L,
+                                         0b000000000001010100100010000000000000000000000000000000000000000L,
+                                         0b000000000001010100000010001000000000000000000000000000000000000L},
+
+                    {0b000000000000010100001010100000000000000000000000000000000000000L,
+                     0b000000000000010100100010001000000000000000000000000000000000000L,
+                     0b000000000000010001001010100000000000000000000000000000000000000L,
+                     0b000000000100010000001010100000000000000000000000000000000000000L}};
+
+            int [] [] indexes3= {{14, 23, 12, 16, 21}, {14, 23, 10, 18, 21}, {14, 23, 12, 16, 19}, {14, 23, 12, 16, 27}};
+            int [] [] indexes4= {{14, 23, 16, 21, 25}, {14, 23, 16, 19, 27}, {14, 23, 18, 21, 25}, {14, 23, 10, 21, 25}};
+
+            check_4_finish = false; //check if there is 4 in a row
+            check_3_finish = false; //check if there is 3 in a row
+
+
+            int [][][]index_total_2={indexes3, indexes4};
+            int [][]mini_boards_total_2= {mini_boards_3, mini_boards_4};
+
+            for(int i=0; i<2; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (count_1(Long.toBinaryString(keep_player1 & masks_diagonal2[i][j])) == 4 & count_1(Long.toBinaryString(keep_ai & masks_diagonal2[i][j])) == 0) { //0 opponents
+                        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+                        for (int z = 0; z < 5; z++) {
+                            if ((check_4_finish == false) & ((mask >>> (index_total_2[i][j][z] - 1)) & keep_ai) == 0 & ((mask >>> (index_total_2[i][j][z] - 1)) & keep_player1) == 0) { //not taken
+                                need_defence = true;
+                                index_defence = index_total_2[i][j][z];
+                                mini_board_for_twist_defence = mini_boards_total_2[i][j]; //the mini board to twist
+                                direction_rotating_defence = twist_mini_boards[j]; //the direction to rotate
+                                check_4_finish = true; //already found
+                                return 100;
+                            }
+                        }
+
+                    }
+                }
+            }
+            for(int i=0; i<2; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (count_1(Long.toBinaryString(keep_player1 & masks_diagonal2[i][j])) == 3 & count_1(Long.toBinaryString(keep_ai & masks_diagonal2[i][j])) == 0) { //0 opponents
+                        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+                        for (int z = 0; z < 5; z++) {
+                            if ((check_3_finish == false) & ((mask >>> (index_total_2[i][j][z]- 1)) & keep_ai) == 0 & ((mask >>> (index_total_2[i][j][z] - 1)) & keep_player1) == 0) { //not taken
+                                System.out.println("IM INSIDE");
+                                need_defence = true;
+                                index_defence = index_total_2[i][j][z];
+                                mini_board_for_twist_defence =mini_boards_total_2[i][j]; //the mini board to twist
+                                direction_rotating_defence = twist_mini_boards[j]; //the direction to rotate
+                                check_3_finish = true; //already found
+                            }
+                        }
+
+                    }
+                }
+            }
+
         }
+
+
 
         if(need_defence==false) {
             // Check for triple power play wins
@@ -614,7 +615,7 @@ public class AiPlayer {
         if(need_defence==true)
             grade=100; //sets defence grade
         else grade =0;
-        direction_rotating_defence=rand.nextInt(2)+1;
+//        direction_rotating_defence=rand.nextInt(2)+1;
         return grade;
     }
 
