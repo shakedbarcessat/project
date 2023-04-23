@@ -1,9 +1,8 @@
 package com.example.pentagogame.View;
-
-
 import com.example.pentagogame.AiPlayer;
 import com.example.pentagogame.Controller.ControllerClass;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,32 +16,20 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class TheBoard extends Application {
-    private final int BOARD_SIZE = 6;
-    private final int MINI_BOARD_SIZE = 3;
-    private final int ROTATE_BUTTONS= 8;
+    private final int BOARD_SIZE = 6; //6x6
+    private final int MINI_BOARD_SIZE = 3; //mini board size
+    private final int ROTATE_BUTTONS= 8; //number of buttons for rotate
     private int turn; //the current turn
     private boolean rotateOnce; //rotating only once
     private boolean forceRotating; //forcing to rotate
     private boolean gameOver; //checks for victory ot tie
     private boolean error; //checks for invalid moves
-
-    private boolean winning=false;
-
-    private int mini_board;
-
-    private int index;
-
-    private int rotating;
-    private Label l; //label for current turn and winner or tie
+    public static Label la; //label for current turn and winner or tie
     private ControllerClass controller = new ControllerClass();//connection to the controller
     private Button[] buttons = new Button[BOARD_SIZE*BOARD_SIZE]; // create an array to store the buttons- of the board itself
     private Button[] buttons_rotate = new Button[ROTATE_BUTTONS]; //create an array to store the buttons- of the rotate
@@ -57,12 +44,16 @@ public class TheBoard extends Application {
     List<Integer> up = new ArrayList<>(Arrays.asList(upBold));
     List<Integer> down = new ArrayList<>(Arrays.asList(downBold));
 
-    Random random = new Random();
-
     private final int RIGHT_DOWN_BOLD=9;
     private final int RIGHT_UP_BOLD=21;
     private final int LEFT_DOWN_BOLD=16;
     private final int LEFT_UP_BOLD=28;
+
+
+    private boolean winning=false;
+    private int mini_board;
+    private int index;
+    private int rotating;
 
     /**
      * initialize the board
@@ -73,11 +64,11 @@ public class TheBoard extends Application {
         this.forceRotating = true;
         this.gameOver = false;
         this.error = true;
-        this.l = new Label("player 1\nturn");//the starting player
-        l.setPrefSize(80, 80);
-        l.setFont(new Font("Arial", 20));
-        l.setTranslateX(220);
-        l.setTranslateY(150);
+        this.la = new Label();//the starting player
+        la.setPrefSize(80, 80);
+        la.setFont(new Font("Arial", 20));
+        la.setTranslateX(220);
+        la.setTranslateY(150);
     }
 
     /**
@@ -104,6 +95,11 @@ public class TheBoard extends Application {
         return turn;
     }
 
+    public boolean getWinning() {
+        return this.winning;
+    }
+
+
     /**
      * sets the error
      * @param b- invalid move
@@ -124,12 +120,12 @@ public class TheBoard extends Application {
      * sets the label- the current turn or the winner or tie
      * @param s
      */
-    public void setL(String s) {
-        this.l.setText(s);
+    public void setLa(String s) {
+        this.la.setText(s);
     }
 
     /**
-     * checks if end of game, if yes than retuens the winner or tie, checks if there was an invalid move
+     * checks if end of game, if yes than returns the winner or tie, checks if there was an invalid move
      * @param s- the string that indicates if there was a win, a tie, an error or the rotating worked well
      * @param b- the buttons of the board
      * @param b2- the buttons of the rotate
@@ -142,7 +138,8 @@ public class TheBoard extends Application {
                 return true;
             } else {
                 this.winning=true;
-                setL(s);
+                System.out.println(this.winning);
+                setLa(s);
                 for (int i = 0; i < b.length; i++) {
                     b[i].setDisable(true);//finish game
                 }
@@ -305,7 +302,7 @@ public class TheBoard extends Application {
             button.setId(Integer.toString(i + 2));
             buttons_rotate[i + 2] = button;//adding to the array of buttons
         }
-        vBox.getChildren().add(this.l);
+        vBox.getChildren().add(this.la);
         vBox.setAlignment(Pos.BOTTOM_LEFT);
         vBox.setAlignment(Pos.TOP_LEFT);
 
@@ -344,8 +341,8 @@ public class TheBoard extends Application {
             view.setFitHeight(50);
             view.setPreserveRatio(true);
             Button button = new Button();
-            button.setTranslateX(-200);//-200
-            button.setTranslateY(-400);//-480 -700
+            button.setTranslateX(-200);
+            button.setTranslateY(-400);
             button.setPrefSize(50, 50);
             button.setGraphic(view);
             vBox3.getChildren().add(button);
@@ -360,7 +357,7 @@ public class TheBoard extends Application {
             view.setPreserveRatio(true);
             Button button = new Button();
             button.setTranslateX(-200);
-            button.setTranslateY(-180); //-150 -300
+            button.setTranslateY(-180);
             button.setPrefSize(50, 50);
             button.setGraphic(view);
             vBox3.getChildren().add(button);
@@ -378,42 +375,42 @@ public class TheBoard extends Application {
         primaryStage.show();
     }
 
+    /**
+     * manages the AI player
+     * @param a- the AIPlayer play
+     */
     public void ai_play(AiPlayer a)
     {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         Button b;
-        if (this.turn == 1) {
+        if (this.turn == 1) { //ai turn
             a.setPlayers();
-            AiPlayer.player_move++;
-            System.out.println("turn: " + turn);
-            System.out.println("move " + AiPlayer.player_move);
-            a.triple_power_play();
-            mini_board = AiPlayer.mini_board_for_twist;
-            index = AiPlayer.index;
-            rotating = AiPlayer.direction_rotating;
-            System.out.println("index: " + index);
-            System.out.println("mini board: " + mini_board);
-            if (rotating == 1)
-                System.out.println("left");
-            else System.out.println("right");
-            System.out.println(this.turn);
+            AiPlayer.player_move++; //adding the strategy turn of the triple power play
+            int grade1= a.triple_power_play(); //the grade that the triple power play returns
+            int grade2= a.defence(); //the grade that the defence returns
+            int grade3= a.straight_five(); //the grade that the straight five returns
+
+            if(grade1>grade2 & grade1>grade3) //the triple power play chosen
+            {
+                mini_board = AiPlayer.mini_board_for_twist_triple; //the mini board to twist
+                index = AiPlayer.index_triple; //the index to add the trophy
+                rotating = AiPlayer.direction_rotating_triple; //the direction to rotate
+            }
+            else if(grade2>grade1 & grade2>grade3) //the defence chosen
+            {
+                mini_board = AiPlayer.mini_board_for_twist_defence; //the mini board to twist
+                index = AiPlayer.index_defence; //the index to add the trophy
+                rotating = AiPlayer.direction_rotating_defence; //the direction to rotate
+                AiPlayer.player_move--; //the straight five wasn't chosen
+            } else if (grade3>grade2 & grade3>grade1) { //the straight five chosen
+                mini_board = AiPlayer.mini_board_for_twist_straight_five; //the mini board to twist
+                index = AiPlayer.index_straight_five; //the index to add the trophy
+                rotating = AiPlayer.direction_rotating_straight_five; //the direction to rotate
+                AiPlayer.player_move--; //the straight five wasn't chosen
+            }
             b = buttons[index - 1];
-            System.out.println("id    " + b.getId());
-            System.out.println("board ai before");
-            System.out.println(Long.toBinaryString(a.getBoard_ai()));
-//            setForceRotating(true);
-            System.out.println(this.forceRotating);
             setError(endGame((controller.addToolAI(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
             if(this.winning==false) {
                 a.setPlayers();
-                System.out.println("board ai");
-                System.out.println(Long.toBinaryString(a.getBoard_ai()));
-                System.out.println("board player1");
-                System.out.println(Long.toBinaryString(a.getPlayer1()));
                 if (this.error == false) {//valid move
                     if (this.turn == 0)
                         setTurn(1);//change turn
@@ -423,6 +420,7 @@ public class TheBoard extends Application {
                     setForceRotating(false);
                 }
                 Button b2;
+                //check which button to push for the right twist
                 if (mini_board == 1) {
                     if (rotating == 1)
                         b2 = buttons_rotate[1];
@@ -448,21 +446,15 @@ public class TheBoard extends Application {
                 if (this.error == false) {
                     if (getTurn() == 0) //still not human
                     {
-                        setRotateOnce(controller.rotateBoardAi(true, mini_board,
-                                rotating, this.rotateOnce, b2, buttons));//rotating the miniboard
-                    } else {
-                        setRotateOnce(controller.rotateBoardAi(false, 0,
-                                0, this.rotateOnce, b2, buttons));//rotating the miniboard
+                        setRotateOnce(controller.rotateBoardAi( mini_board,
+                                rotating, this.rotateOnce, buttons));//rotating the miniboard
                     }
-                    if (getTurn() == 1)
-                        setL("ai\nturn");//sets player turn
-                    else
-                        setL("player 1\nturn");
                     setForceRotating(true);
                 }
             }
 
         }
+
 
     }
 
@@ -493,12 +485,11 @@ public class TheBoard extends Application {
                         if (this.error == false) {
                             setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
                             if (getTurn() == 1)
-                                setL("player 2\nturn");//sets player turn
+                                setLa("player 2\nturn");//sets player turn
                             else
-                                setL("player 1\nturn");
+                                setLa("player 1\nturn");
                             setForceRotating(true);
                         }
-
                     });
                 }
             }
@@ -506,30 +497,20 @@ public class TheBoard extends Application {
 
 
 
-
-
-
-
-
-
-
-
-
         else if(OpeningScreen.num==1){ //aiVSh
             AiPlayer a= new AiPlayer();
-            this.turn=1;
-            ai_play(a);
+            this.turn=1; //the first player is ai
+            ai_play(a); //sets the AI
+            setLa("player1\nturn");
+            Timer timer = new Timer();
+
+
             for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
+
                 Button b;
-//                System.out.println("turn: " + turn);
-//                System.out.println("move " + AiPlayer.player_move);
                 b = buttons[i];
-//                System.out.println(i);
                 b.setOnAction(e -> {
                     setError(endGame((controller.addToolAI(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
-                    System.out.println(this.error);
-//                    System.out.println("the current ai: ");
-//                    System.out.println(Long.toBinaryString(a.getBoard_ai()));
                     if (this.error == false) {//valid move
                         if (this.turn == 0)
                             setTurn(1);//change turn
@@ -538,40 +519,39 @@ public class TheBoard extends Application {
                         setRotateOnce(true);
                         setForceRotating(false);
                     }
-                    System.out.println(turn);
                 });
 
                 for (int j = 0; j < ROTATE_BUTTONS; j++) {
                     Button b2 = buttons_rotate[j];
                     b2.setOnAction(e2 -> {
-                        System.out.println("error: "+ error);
-                        if (this.error == false) {
-                            if (getTurn() == 1) //still not ai
-                            {
-                                setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
+                        setRotateOnce(controller.rotateBoard(b2, this.rotateOnce, buttons));//rotating the miniboard
+                        setForceRotating(true);
+                        setLa("ai\nturn");
+                        TimerTask task2 = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Platform.runLater(() -> ai_play(a));
                             }
-                            if (getTurn() == 1){
-                                setL("ai\nturn");//sets player turn
-                                setForceRotating(true);
-                                ai_play(a);
+                        };
+                        timer.schedule(task2, 500);
+
+                        TimerTask task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Platform.runLater(() -> {
+                                    if (getWinning() == false) {
+                                        setLa("player1\nturn");
+                                    }
+                                });
                             }
-                            else
-                                setL("player 1\nturn");
-                            setForceRotating(true);
+                        };
+                        if(this.winning==false){
+                            timer.schedule(task, 1000);
                         }
-                    });
+                            });
+                        }
+                   }
                 }
             }
-
-
-
-        }
-
-    }
-
 }
+

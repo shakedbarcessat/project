@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -68,7 +67,7 @@ public class OpeningScreen extends Application {
 
 
         instructions.setOnAction(event -> {
-            controller.transferToDistructions(primaryStage);//transfers to the instructions screen
+            controller.transferToistructions(primaryStage);//transfers to the instructions screen
         });
 
 

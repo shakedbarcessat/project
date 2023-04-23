@@ -1,5 +1,4 @@
 package com.example.pentagogame.View;
-
 import com.example.pentagogame.Controller.ControllerClass;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -13,7 +12,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import java.io.File;
 
 public class Instructions extends Application {

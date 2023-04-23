@@ -1,5 +1,4 @@
 package com.example.pentagogame.Controller;
-
 import com.example.pentagogame.Model.Board;
 import com.example.pentagogame.View.Instructions;
 import com.example.pentagogame.View.OpeningScreen;
@@ -13,12 +12,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import static javafx.application.Application.launch;
 
-
 public class ControllerClass {
     public static Board b; //the board of the model
     private static OpeningScreen pt; //the opening screen of the view
-
-    private final int NUM_BUTTONS_MINI_BOARD=9;
+    private final int NUM_BUTTONS_MINI_BOARD=9; //num of buttons in each mini board
 
     /**
      * initializes the class
@@ -29,15 +26,6 @@ public class ControllerClass {
         this.pt=new OpeningScreen();
     }
 
-    public Board getB()
-    {
-        return this.b;
-    }
-
-    public void setAi()
-    {
-        this.b.setAi_use(true);
-    }
 
     /**
      * starts the game
@@ -92,7 +80,7 @@ public class ControllerClass {
      * transfer to instructions screen
      * @param stage- the main stage
      */
-    public void transferToDistructions(Stage stage)
+    public void transferToistructions(Stage stage)
     {
         Instructions h= new Instructions();
         h.start(stage);
@@ -138,10 +126,6 @@ public class ControllerClass {
 
 
                 }
-//                System.out.println("player1: ");
-//                System.out.println(Long.toBinaryString(this.b.getPlayer1()));
-//                System.out.println("player2: ");
-//                System.out.println(Long.toBinaryString(this.b.getPlayer2()));
             }
             else
                 return "error"; //trying to add a button in a taken place- invalid move
@@ -153,7 +137,7 @@ public class ControllerClass {
      * rotates the board
      * @param b- the rotate button that pushed
      * @param bool- true if didn't twist yet
-     * @param buttons-
+     * @param buttons- all buttons
      * @return- returns false in order to allow twisting only once
      */
     public boolean rotateBoard(Button b, boolean bool, Button [] buttons)
@@ -178,20 +162,8 @@ public class ControllerClass {
             else
                 boardRotate = 1;
             this.b.create_mini_board_twist(numBoard, boardRotate);//twistingin model
-//            System.out.println("num board: " + numBoard + ", rotate 1 to left and 2 to right: " + boardRotate);
-//            System.out.println("player1: rotate");
-//            System.out.println(Long.toBinaryString(this.b.getPlayer1()));
-//            System.out.println("player2: rotate");
-//            System.out.println(Long.toBinaryString(this.b.getPlayer2()));
-
-
-//            System.out.println("mini player1 ");
             player1= this.b.mask(numBoard, this.b.getPlayer1());
             player2= this.b.mask(numBoard, this.b.getPlayer2());
-//            System.out.println(Long.toBinaryString(player1));
-//            System.out.println("mini player2 ");
-//            System.out.println(Long.toBinaryString(player2));
-
 
             Arrays.sort(buttons, Comparator.comparingInt(button -> Integer.parseInt(button.getId()))); //sorts the array of buttons by id
 
@@ -222,6 +194,14 @@ public class ControllerClass {
     }
 
 
+    /**
+     * adds a tool to the board(the model), and checks for win or tie. add tool in the AI mode
+     * changes the current turn and checks if the pushed button is legal
+     * @param turn- gets the current turn
+     * @param b- the pushed button
+     * @param check- only if the older player twisted the board
+     * @return- string that indicates if there has benn an error or tie or which player won
+     */
     public String addToolAI(int turn, Button b, boolean check) {
         if(check==true){
             if(this.b.checkForTie()==true)
@@ -253,12 +233,6 @@ public class ControllerClass {
 
 
                 }
-//                System.out.println("player1: ");
-//                System.out.println(Long.toBinaryString(this.b.getPlayer1()));
-//                System.out.println("player2: ");
-//                System.out.println(Long.toBinaryString(this.b.getPlayer2()));
-                System.out.println("ai: ");
-                System.out.println(Long.toBinaryString(this.getB().getPlayer2()));
             }
             else
                 return "error"; //trying to add a button in a taken place- invalid move
@@ -266,45 +240,23 @@ public class ControllerClass {
         return ""; //continue
     }
 
-    public boolean rotateBoardAi(boolean ai, int numBoard, int boardRotate, boolean bool, Button b, Button [] buttons)
+    /**
+     * rotates the board
+     * @param numBoard- num board to twist
+     * @param boardRotate- direction of rotating
+     * @param bool- true if didn't twist yet
+     * @param buttons - all buttons
+     * @return
+     */
+    public boolean rotateBoardAi(int numBoard, int boardRotate, boolean bool, Button [] buttons)
     {
         short player1;
         short player2;
         short mask= 0b100000000000000;
         if(bool==true) {
-            System.out.println("sadgsfhtdjyf");
-
-            if(ai==false)
-            {
-                //Integer.parseInt(b.getId())%2+1
-                if (Integer.parseInt(b.getId()) < 2)
-                    numBoard = 1;
-                else if (Integer.parseInt(b.getId()) > 5)
-                    numBoard = 4;
-                else if (Integer.parseInt(b.getId()) > 1 && Integer.parseInt(b.getId()) < 4)
-                    numBoard = 3;
-                else
-                    numBoard = 2;
-                if (Integer.parseInt(b.getId()) % 2 == 0)
-                    boardRotate = 2;
-                else
-                    boardRotate = 1;
-            }
-            this.b.create_mini_board_twist(numBoard, boardRotate);//twistingin model
-//            System.out.println("num board: " + numBoard + ", rotate 1 to left and 2 to right: " + boardRotate);
-//            System.out.println("player1: rotate");
-//            System.out.println(Long.toBinaryString(this.b.getPlayer1()));
-//            System.out.println("player2: rotate");
-//            System.out.println(Long.toBinaryString(this.b.getPlayer2()));
-
-
-//            System.out.println("mini player1 ");
+            this.b.create_mini_board_twist(numBoard, boardRotate);//twisting in model
             player1= this.b.mask(numBoard, this.b.getPlayer1());
             player2= this.b.mask(numBoard, this.b.getPlayer2());
-//            System.out.println(Long.toBinaryString(player1));
-//            System.out.println("mini player2 ");
-
-
 
             Arrays.sort(buttons, Comparator.comparingInt(button -> Integer.parseInt(button.getId()))); //sorts the array of buttons by id
 

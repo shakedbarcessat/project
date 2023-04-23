@@ -13,25 +13,6 @@ public class MiniBoard {
     }
 
     /**
-     * setter
-     *
-     * @param board_mini- setting the mini board
-     */
-    public void setBoard_mini(short board_mini) {
-        this.board_mini = board_mini;
-    }
-
-    /**
-     * getter
-     *
-     * @return- getting the mini board
-     */
-    public short getBoard_mini() {
-        return this.board_mini;
-    }
-
-
-    /**
      * rotates the board left (the variable)
      *
      * @return- returns the board after rotating left
@@ -73,7 +54,7 @@ public class MiniBoard {
             num = (short) (num >>> 1);
             index++;
         }
-        short level1 = save;
+        short level1 = save; //rotates the first row
 
 
         x = this.board_mini;
@@ -97,7 +78,7 @@ public class MiniBoard {
 
         }
 
-        short level2 = save;
+        short level2 = save;//rotates the second row
 
 
         x = this.board_mini;
@@ -122,7 +103,7 @@ public class MiniBoard {
             index++;
 
         }
-        short level3 = save;
+        short level3 = save;//rotates the third row
 
 
         short last = 0;
@@ -144,7 +125,7 @@ public class MiniBoard {
         }
 
 
-        return last;
+        return last; //matching the 3 rows
     }
 
     /**
@@ -184,7 +165,7 @@ public class MiniBoard {
             index++;
         }
 
-        short level1 = save;
+        short level1 = save;//rotates the first row
 
 
         x = board_mini;
@@ -210,7 +191,7 @@ public class MiniBoard {
 
         }
 
-        short level2 = save;
+        short level2 = save;//rotates the second row
 
 
         x = board_mini;
@@ -229,7 +210,9 @@ public class MiniBoard {
             num = (short) (num >>> 1);
             index--;
         }
-        short level3 = save;
+        short level3 = save;//rotates the third row
+
+
 
         short last = 0;
         short keep = 0;
@@ -248,7 +231,7 @@ public class MiniBoard {
             last = (short) (keep | last);
             move = (short) (move >>> 1);
         }
-        return last;
+        return last; //matching the 3 rows
     }
 
 }

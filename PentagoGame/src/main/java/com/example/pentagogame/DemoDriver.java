@@ -1,8 +1,5 @@
 package com.example.pentagogame;
-
 import com.example.pentagogame.Controller.ControllerClass;
-import com.example.pentagogame.Model.Board;
-import com.example.pentagogame.View.OpeningScreen;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
