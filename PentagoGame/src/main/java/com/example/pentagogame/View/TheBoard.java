@@ -29,7 +29,7 @@ public class TheBoard extends Application {
     private boolean forceRotating; //forcing to rotate
     private boolean gameOver; //checks for victory ot tie
     private boolean error; //checks for invalid moves
-    public static Label la; //label for current turn and winner or tie
+    private Label la; //label for current turn and winner or tie
     private ControllerClass controller = new ControllerClass();//connection to the controller
     private Button[] buttons = new Button[BOARD_SIZE*BOARD_SIZE]; // create an array to store the buttons- of the board itself
     private Button[] buttons_rotate = new Button[ROTATE_BUTTONS]; //create an array to store the buttons- of the rotate
@@ -123,6 +123,8 @@ public class TheBoard extends Application {
     public void setLa(String s) {
         this.la.setText(s);
     }
+
+
 
     /**
      * checks if end of game, if yes than returns the winner or tie, checks if there was an invalid move
@@ -385,8 +387,9 @@ public class TheBoard extends Application {
             a.setPlayers();
             AiPlayer.player_move++; //adding the strategy turn of the triple power play
             int grade1= a.triple_power_play(); //the grade that the triple power play returns
-            int grade2= a.defence(); //the grade that the defence returns
-            int grade3= a.straight_five(); //the grade that the straight five returns
+            int grade2= a.defense(); //the grade that the defence returns
+            int grade3= a.rows_columns(); //the grade that the rows amd columns returns
+            System.out.println(grade3);
 
             if(grade1>grade2 & grade1>grade3) //the triple power play chosen
             {
@@ -396,17 +399,17 @@ public class TheBoard extends Application {
             }
             else if(grade2>grade1 & grade2>grade3) //the defence chosen
             {
-                mini_board = AiPlayer.mini_board_for_twist_defence; //the mini board to twist
-                index = AiPlayer.index_defence; //the index to add the trophy
-                rotating = AiPlayer.direction_rotating_defence; //the direction to rotate
-                AiPlayer.player_move--; //the straight five wasn't chosen
+                mini_board = AiPlayer.mini_board_for_twist_defense; //the mini board to twist
+                index = AiPlayer.index_defense; //the index to add the trophy
+                rotating = AiPlayer.direction_rotating_defense; //the direction to rotate
+                AiPlayer.player_move--; //the triple power play wasn't chosen
 
 
-            } else if (grade3>grade2 & grade3>grade1) { //the straight five chosen
-                mini_board = AiPlayer.mini_board_for_twist_straight_five; //the mini board to twist
-                index = AiPlayer.index_straight_five; //the index to add the trophy
-                rotating = AiPlayer.direction_rotating_straight_five; //the direction to rotate
-                AiPlayer.player_move--; //the straight five wasn't chosen
+            } else if (grade3>grade2 & grade3>grade1) { //the rows_columns chosen
+                mini_board = AiPlayer.mini_board_for_twist_rows_columns; //the mini board to twist
+                index = AiPlayer.index_rows_columns; //the index to add the trophy
+                rotating = AiPlayer.direction_rotating_rows_columns; //the direction to rotate
+                AiPlayer.player_move--; //the triple power play wasn't chosen
             }
             b = buttons[index - 1];
             setError(endGame((controller.addToolAI(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
