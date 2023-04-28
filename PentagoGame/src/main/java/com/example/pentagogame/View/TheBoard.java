@@ -141,6 +141,9 @@ public class TheBoard extends Application {
             } else {
                 this.winning=true;
                 setLa(s);
+                this.la.setTextFill(Color.web("#0076a3"));
+                la.setPrefSize(120, 120);
+                la.setFont(new Font("Arial", 30));
                 for (int i = 0; i < b.length; i++) {
                     b[i].setDisable(true);//finish game
                 }
@@ -389,7 +392,6 @@ public class TheBoard extends Application {
             int grade1= a.triple_power_play(); //the grade that the triple power play returns
             int grade2= a.defense(); //the grade that the defence returns
             int grade3= a.rows_columns(); //the grade that the rows amd columns returns
-            System.out.println(grade3);
 
             if(grade1>grade2 & grade1>grade3) //the triple power play chosen
             {
@@ -403,7 +405,6 @@ public class TheBoard extends Application {
                 index = AiPlayer.index_defense; //the index to add the trophy
                 rotating = AiPlayer.direction_rotating_defense; //the direction to rotate
                 AiPlayer.player_move--; //the triple power play wasn't chosen
-
 
             } else if (grade3>grade2 & grade3>grade1) { //the rows_columns chosen
                 mini_board = AiPlayer.mini_board_for_twist_rows_columns; //the mini board to twist
@@ -468,6 +469,7 @@ public class TheBoard extends Application {
      */
     public void start(Stage primaryStage) {
         initialize_the_board(primaryStage); //initializes the board
+        setLa("player 1\nturn");
         if(OpeningScreen.num==0) { //hVSh
             for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
                 Button b = buttons[i];

@@ -1,5 +1,4 @@
 package com.example.pentagogame.Model;
-
 public class MiniBoard {
     private short board_mini;
 

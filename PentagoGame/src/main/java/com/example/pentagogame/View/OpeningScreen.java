@@ -1,5 +1,4 @@
 package com.example.pentagogame.View;
-
 import com.example.pentagogame.Controller.ControllerClass;
 import javafx.application.Application;
 import javafx.geometry.Pos;

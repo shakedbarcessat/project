@@ -1,4 +1,5 @@
 package com.example.pentagogame.Controller;
+import com.example.pentagogame.DemoDriver;
 import com.example.pentagogame.Model.Board;
 import com.example.pentagogame.View.Instructions;
 import com.example.pentagogame.View.OpeningScreen;
@@ -49,6 +50,9 @@ public class ControllerClass {
      */
     public void transferToBoard(Stage stage)
     {
+        DemoDriver d= new DemoDriver();
+        Stage stage1=new Stage();
+        d.start(stage1);
         TheBoard h= new TheBoard();
         OpeningScreen.num=0; //hVSh
         h.start(stage);
@@ -61,6 +65,9 @@ public class ControllerClass {
      */
     public void transferToAI(Stage stage)
     {
+        DemoDriver d= new DemoDriver();
+        Stage stage1=new Stage();
+        d.start(stage1);
         TheBoard h= new TheBoard();
         OpeningScreen.num=1; //aiVSh
         h.start(stage);
@@ -208,7 +215,7 @@ public class ControllerClass {
                 return "Tie!!";
             else if (this.b.checkForWin()==true) {
                 if(turn==0){
-                    return "ai \nwon!!";} //ai is 1
+                    return "AI \nwon!!";} //ai is 1
                 else{
                     return "player1 \nwon!!";} //player1 is 0
             }
@@ -290,6 +297,4 @@ public class ControllerClass {
     public static void main(String[] args) {
         launch(args);
     }
-
-
 }
