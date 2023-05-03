@@ -1,6 +1,8 @@
 package com.example.pentagogame;
+
 import com.example.pentagogame.Controller.ControllerClass;
 import com.example.pentagogame.Model.Board;
+
 import java.util.Random;
 
 public class AiPlayer {
@@ -80,13 +82,9 @@ public class AiPlayer {
     private int[] twist_mini_boards_34 = {rand.nextInt(2) + 1, 2, 1, 1, 2};
 
     private boolean check_4_finish = false;
-
     private boolean check_3_finish = false;
-
     private boolean check_2_finish = false;
-
     private boolean check_1_finish = false;
-
     private boolean check_0_finish = false;
 
 
@@ -131,6 +129,10 @@ public class AiPlayer {
     public static int mini_board_for_twist_triple; //mini board for twisting
     public static int index_triple; //index of putting the ball
     public static int direction_rotating_triple; //the side to rotate
+
+    public static int mini_board_for_twist_diagonal; //mini board for twisting
+    public static int index_diagonal; //index of putting the ball
+    public static int direction_rotating_diagonal; //the side to rotate
     private int grade = 80;
     private int grade_rows_columns = 0;
 
@@ -142,7 +144,7 @@ public class AiPlayer {
     public AiPlayer() {
         setBoard_player1(ControllerClass.b.getPlayer1());
         setBoard_ai(ControllerClass.b.getPlayer2());
-        player_move=0;
+        player_move = 0;
     }
 
     /**
@@ -552,7 +554,275 @@ public class AiPlayer {
     }
 
 
+    /**
+     * checks if the strategy is over- lose.
+     * it happens when player1 puts 2 trophy in the middle of mini board that are not diagonal
+     *
+     * @return true if lise, else false
+     */
+    public boolean check_for_lose() {
+        long[] masks =
+                {0b000010000000010000000000000000000000000000000000000000000000000L,
+                        0b000010000000000000000010000000000000000000000000000000000000000L,
+                        0b000000000000010000000000000000010000000000000000000000000000000L,
+                        0b000000000000000000000010000000010000000000000000000000000000000L};
+        int count = 0;
+        for (int i = 0; i < 4; i++) {
+            if ((player1 & masks[i]) == masks[i])//the mask matches- lose
+            {
+                count++;
+            }
+        }
+        if (count > 0) //lose
+            return true;
+        return false;
+    }
 
+    /**
+     * check for the lose of the left diagonal.
+     * if there is a trophy of player 1 in the middle
+     *
+     * @return true if mask1 is lose, else false
+     */
+    public boolean check_for_lose_1() {
+        long mask1 =
+                0b000010000000000000000000000000010000000000000000000000000000000L;
+        if (count_1(Long.toBinaryString(mask1 & player1)) > 0)//lose
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * repeating the checking after every strategy
+     *
+     * @param check-        check if already finished
+     * @param i-            the i
+     * @param keep_ai-      the ai board
+     * @param keep_player1- the player 1 board
+     * @param j-            the j
+     * @param b-            the board
+     * @param r-            the right schema
+     * @return
+     */
+    public boolean repeat_diagonal(boolean check, int i, long keep_ai,
+                                   long keep_player1, int j, Board b, int r) {
+        int[] twist_mini_boards_1 = {rand.nextInt(2) + 1, rand.nextInt(2) + 1, 2, 1}; //direction rotating for
+        // the left diagonal
+        int[] mini_boards_1 = {rand.nextInt(2) + 2, 1, 4, 4}; //mini boards for left diagonal
+        int[] mini_boards_2 = {rand.nextInt(2) + 2, 4, 1, 1}; //mini boards for left diagonal
+        int[][] indexes_1 = {{5, 32, 1, 9, 28}, {5, 32, 3, 7, 28}, {5, 32, 1, 9, 34}, {5, 32, 1, 9, 30}}; //indexes
+        // to put the trophy
+        int[][] indexes2 = {{5, 32, 9, 28, 36}, {5, 32, 9, 30, 34}, {5, 32, 3, 28, 36}, {5, 32, 7, 28, 36}};//indexes
+        // to put the trophy
+        int[][][] index_total = {indexes_1, indexes2};
+        int[][] mini_boards_total = {mini_boards_1, mini_boards_2};
+
+        int[] twist_mini_boards_2 = {rand.nextInt(2) + 1, rand.nextInt(2) + 1, 1, 2};//direction rotating for
+        // the right diagonal
+        int[] mini_boards_3 = {rand.nextInt(2) * 3 + 1, 1, 3, 3};//mini boards for right diagonal
+        int[] mini_boards_4 = {rand.nextInt(2) * 3 + 1, 3, 1, 1};//mini boards for right diagonal
+        int[][] mini_boards_total_2 = {mini_boards_3, mini_boards_4};
+
+
+        int[][] twist_all = {twist_mini_boards_1, twist_mini_boards_2};
+        int[][][] mini_boards_all = {mini_boards_total, mini_boards_total_2};
+
+
+        long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
+        for (int z = 0; z < 5; z++) {
+            if ((check == false) & ((mask >>> (index_total[i][j][z] - 1)) & keep_ai) == 0 & ((mask >>> (index_total[i][j][z] - 1)) & keep_player1) == 0) { //not taken
+                index_diagonal = index_total[i][j][z];
+                if (r == 1) { //needs to make twisting
+                    index_diagonal = b.rotate_whole_opp(index_diagonal, 2, 3);
+                }
+                mini_board_for_twist_diagonal = mini_boards_all[r][i][j];
+                //the mini board to twist
+                direction_rotating_diagonal = twist_all[r][j];
+                check = true; //found
+            }
+
+        }
+        if (check == true)
+            return true;
+        return false;
+    }
+
+    /**
+     * diagonal check
+     *
+     * @return returns the grade for the strategy-
+     * 30 for less than 4 trophy
+     * 120 for 4 trophy- winning
+     */
+    public int diagonal() {
+
+        long[][] masks_diagonal1 = {{0b100010001000000000000000000100010000000000000000000000000000000L,
+                0b001010100000000000000000000100010000000000000000000000000000000L,
+                0b100010001000000000000000000000010100000000000000000000000000000L,
+                0b100010001000000000000000000001010000000000000000000000000000000L},
+
+                {0b000010001000000000000000000100010001000000000000000000000000000L,
+                        0b000010001000000000000000000001010010000000000000000000000000000L,
+                        0b001010000000000000000000000100010001000000000000000000000000000L,
+                        0b000010100000000000000000000100010001000000000000000000000000000L}};
+
+        check_4_finish = false; //check if there is 4 in a row
+        check_3_finish = false; //check if there is 3 in a row
+        check_2_finish = false;//check if there is 2 in a row
+        check_1_finish = false;//check if there is 1 in a row
+        check_0_finish = false;//check if there is 0 in a row
+        long keep_ai = ai;
+        long keep_player1 = player1;
+
+        if (check_for_lose() == false) { //no lose
+            for (int r = 0; r < 2; r++) {
+                if (check_for_lose_1() == true)//lose in left diagonal
+                {
+                    r = 1; //go to right diagonal
+                }
+                for (int i = 0; i < 2; i++) {
+                    keep_ai = ai;
+                    keep_player1 = player1;
+                    Board b = new Board();
+                    b.setPlayer1(player1);
+                    b.setPlayer2(ai);
+                    if (r == 1) {
+                        long[] players = b.rotate_whole(2, 3);
+                        keep_ai = players[1];
+                        keep_player1 = players[0];
+                    }
+                    for (int j = 0; j < 4; j++) {
+
+                        if (count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 4 & count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) == 0) { //0 opponents
+                            check_4_finish = repeat_diagonal(check_4_finish, i,
+                                    keep_ai, keep_player1, j, b, r);
+                            if (check_4_finish == true) return 120; //sure win
+                        }
+                    }
+                }
+            }
+        }
+        if (check_4_finish == false & check_for_lose() == false) { //no lose
+            for (int r = 0; r < 2; r++) {
+                if (check_for_lose_1() == true)//lose in left diagonal
+                {
+                    r = 1; //go to right diagonal
+                }
+                for (int i = 0; i < 2; i++) {
+                    keep_ai = ai;
+                    keep_player1 = player1;
+                    Board b = new Board();
+                    b.setPlayer1(player1);
+                    b.setPlayer2(ai);
+                    if (r == 1) {
+                        long[] players = b.rotate_whole(2, 3);
+                        keep_ai = players[1];
+                        keep_player1 = players[0];
+                    }
+                    for (int j = 0; j < 4; j++) {
+                        if (count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 3 & count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) < 2) { //less than 2 opponents
+                            check_3_finish = repeat_diagonal(check_3_finish, i,
+                                    keep_ai, keep_player1, j, b, r);
+                            if (check_3_finish == true) return 30;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (check_4_finish == false & check_3_finish == false & check_for_lose() == false) {//no lose
+            for (int r = 0; r < 2; r++) {
+                if (check_for_lose_1() == true) //lose in left diagonal
+                {
+                    r = 1; //go to right diagonal
+                }
+                for (int i = 0; i < 2; i++) {
+                    keep_ai = ai;
+                    keep_player1 = player1;
+                    Board b = new Board();
+                    b.setPlayer1(player1);
+                    b.setPlayer2(ai);
+                    if (r == 1) {
+                        long[] players = b.rotate_whole(2, 3);
+                        keep_ai = players[1];
+                        keep_player1 = players[0];
+                    }
+                    for (int j = 0; j < 4; j++) {
+                        if (count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 2 & count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) < 2) { // less than 2 opponents
+                            check_2_finish = repeat_diagonal(check_2_finish, i,
+                                    keep_ai, keep_player1, j, b, r);
+                            if (check_2_finish == true) return 30;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (check_4_finish == false & check_3_finish == false & check_2_finish == false & check_for_lose() == false) {
+            //no lose
+            for (int r = 0; r < 2; r++) {
+                if (check_for_lose_1() == true) //lose in left diagonal
+                {
+                    r = 1; //go to right diagonal
+                }
+                for (int i = 0; i < 2; i++) {
+                    keep_ai = ai;
+                    keep_player1 = player1;
+                    Board b = new Board();
+                    b.setPlayer1(player1);
+                    b.setPlayer2(ai);
+                    if (r == 1) {
+                        long[] players = b.rotate_whole(2, 3);
+                        keep_ai = players[1];
+                        keep_player1 = players[0];
+                    }
+                    for (int j = 0; j < 4; j++) {
+                        if (count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 1 & count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) < 2) { //less than 2 opponents
+                            check_1_finish = repeat_diagonal(check_1_finish, i,
+                                    keep_ai, keep_player1, j, b, r);
+                            if (check_1_finish == true) return 30;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (check_4_finish == false & check_3_finish == false & check_2_finish == false & check_1_finish == false & check_for_lose() == false) {//no lose
+            for (int r = 0; r < 2; r++) {
+                if (check_for_lose_1() == true) //lose in left diagonal
+                {
+                    r = 1;//go to right diagonal
+                }
+                for (int i = 0; i < 2; i++) {
+                    keep_ai = ai;
+                    keep_player1 = player1;
+                    Board b = new Board();
+                    b.setPlayer1(player1);
+                    b.setPlayer2(ai);
+                    if (r == 1) {
+                        long[] players = b.rotate_whole(2, 3);
+                        keep_ai = players[1];
+                        keep_player1 = players[0];
+                    }
+                    for (int j = 0; j < 4; j++) {
+                        if (count_1(Long.toBinaryString(keep_ai & masks_diagonal1[i][j])) == 0 & count_1(Long.toBinaryString(keep_player1 & masks_diagonal1[i][j])) < 2) { //less than 2 opponents
+                            check_0_finish = repeat_diagonal(check_0_finish, i,
+                                    keep_ai, keep_player1, j, b, r);
+                            if (check_0_finish == true) return 30;
+                        }
+                    }
+                }
+            }
+        }
+        if (check_for_lose() == true) return 0;//lose
+        return 30;
+
+    }
 
 
     /**
@@ -562,12 +832,12 @@ public class AiPlayer {
      */
     private void player_move_1(int playing_strategy) {
         if (check_for_lose_sides(current_strategy) == false & check_for_lose(current_strategy) == false) {
-            boolean found_empty_place=false;
-            int index=0;
+            boolean found_empty_place = false;
+            int index = 0;
             int[] possible_moves_12_copy = {2, 4, 6, 8, 29, 31, 33, 35}; //possible indexes to win the first strategy
-            int[] mini_board_12_possible1_copy= {random.nextInt(2) + 2, random.nextInt(2) + 2, 1, 1, 4, 4,
+            int[] mini_board_12_possible1_copy = {random.nextInt(2) + 2, random.nextInt(2) + 2, 1, 1, 4, 4,
                     random.nextInt(2) + 2, random.nextInt(2) + 2}; //the mini boards to twist for option 1(the better one)
-            int [] twist_board_12_possible1_copy= {random.nextInt(2) + 1, random.nextInt(2) + 1, 1, 2, 2, 1,
+            int[] twist_board_12_possible1_copy = {random.nextInt(2) + 1, random.nextInt(2) + 1, 1, 2, 2, 1,
                     random.nextInt(2) + 1, random.nextInt(2) + 1}; //the twists of the mini boards for option 1
             int[] possible_moves_34_copy = {11, 13, 15, 17, 20, 22, 24, 26}; //possible indexes to win the second strategy
             int[] mini_board_34_possible1_copy = {random.nextInt(2) * 3 + 1, 2, random.nextInt(2) * 3 + 1,
@@ -576,36 +846,34 @@ public class AiPlayer {
                     1, 1, random.nextInt(2) + 1, 2, random.nextInt(2) + 1}; //the twists of the mini boards for option 1
 
 
-            while(found_empty_place==false){
+            while (found_empty_place == false) {
                 long mask_possible = 0b100000000000000000000000000000000000000000000000000000000000000L; //follow each bit
-                int i = rand.nextInt(8-index++);
+                int i = rand.nextInt(8 - index++);
                 if (playing_strategy == 1) {
                     if (((mask_possible >>> (possible_moves_12_copy[i] - 1)) & player1) == 0 &
                             ((mask_possible >>> (possible_moves_12_copy[i] - 1)) & ai) == 0) //place not taken
                     {
-                        found_empty_place=true;
+                        found_empty_place = true;
                         AiPlayer.index_triple = possible_moves_12_copy[i];
                         AiPlayer.mini_board_for_twist_triple = mini_board_12_possible1_copy[i];
-                        AiPlayer.direction_rotating_triple =twist_board_12_possible1_copy[i];
-                    }
-                    else { //not found
-                        possible_moves_12_copy[i]=possible_moves_12_copy[8-index];
-                        mini_board_12_possible1_copy[i]=mini_board_12_possible1_copy[8-index];
-                        twist_board_12_possible1_copy[i]=twist_board_12_possible1_copy[8-index];
+                        AiPlayer.direction_rotating_triple = twist_board_12_possible1_copy[i];
+                    } else { //not found
+                        possible_moves_12_copy[i] = possible_moves_12_copy[8 - index];
+                        mini_board_12_possible1_copy[i] = mini_board_12_possible1_copy[8 - index];
+                        twist_board_12_possible1_copy[i] = twist_board_12_possible1_copy[8 - index];
                     }
                 } else if (playing_strategy == 2) {
                     if (((mask_possible >>> (possible_moves_34_copy[i] - 1)) & player1) == 0 &
                             ((mask_possible >>> (possible_moves_34_copy[i] - 1)) & ai) == 0) //place not taken
                     {
-                        found_empty_place=true;
+                        found_empty_place = true;
                         AiPlayer.index_triple = possible_moves_34_copy[i];
                         AiPlayer.mini_board_for_twist_triple = mini_board_34_possible1_copy[i];
                         AiPlayer.direction_rotating_triple = twist_board_34_possible1_copy[i];
-                    }
-                    else {
-                        possible_moves_34_copy[i]=possible_moves_34_copy[8-index];
-                        mini_board_34_possible1_copy[i]=mini_board_34_possible1_copy[8-index];
-                        twist_board_34_possible1_copy[i]=twist_board_34_possible1_copy[8-index];
+                    } else {
+                        possible_moves_34_copy[i] = possible_moves_34_copy[8 - index];
+                        mini_board_34_possible1_copy[i] = mini_board_34_possible1_copy[8 - index];
+                        twist_board_34_possible1_copy[i] = twist_board_34_possible1_copy[8 - index];
                     }
                 }
             }
@@ -1139,7 +1407,7 @@ public class AiPlayer {
             int[] places = {};
             int[] twist = {};
             int[] places2 = {28, 30, 34, 36};
-            int[] twisting2 = {1, 1, 2,  random.nextInt(2) + 1};
+            int[] twisting2 = {1, 1, 2, random.nextInt(2) + 1};
             int mini_board = 0;
 
 
@@ -1306,9 +1574,6 @@ public class AiPlayer {
         return grade;
 
     }
-
-
-
 
 
     /**

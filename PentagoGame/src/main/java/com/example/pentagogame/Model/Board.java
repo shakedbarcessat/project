@@ -270,7 +270,39 @@ public class Board {
     public long [] rotate_whole(int mini_board1, int mini_board2)
     {
         long [] players= new long[2]; //keeps the players
-        if(mini_board1==2 & mini_board2==4) //mini board 2 to be mini board 1, and mini board 4 to be mini board 2
+
+        if(mini_board1==2 & mini_board2==3) //diagonal, mini board 2 to mini board 1 and mini board 3 to mini board 4
+        {
+            create_mini_board_twist(2, 1); //rotate left
+            create_mini_board_twist(3, 1); //rotate left
+
+            //player2
+            long masking_36= 0b111111111111111111111111111111111111000000000000000000000000000L; //mask of the entire board - 36 bits from the left
+            long mini_board_second= getPlayer2()>>>18;
+            mini_board_second=mini_board_second&masking_36; //deletes all the mini boards besides mini board 2
+            mini_board_second=mini_board_second<<27; //move it to mini board 1
+            long mini_board_third= getPlayer2()<<18; //deletes the mini boards 1, 2
+            mini_board_third=mini_board_third>>>27;//deletes the mini boards 4
+            mini_board_third=mini_board_third&masking_36; //deletes all the mini boards besides mini board 3
+            setPlayer2(mini_board_second | mini_board_third); //connects the 2 mini board
+
+
+            //player1
+            mini_board_second= getPlayer1()>>>18;
+            mini_board_second=mini_board_second&masking_36; //deletes all the mini boards besides mini board 2
+            mini_board_second=mini_board_second<<27; //move it to mini board 1
+            mini_board_third= getPlayer1()<<18;//deletes the mini boards 1, 2
+            mini_board_third=mini_board_third>>>27;//deletes the mini boards 4
+            mini_board_third=mini_board_third&masking_36; //deletes all the mini boards besides mini board 3
+            setPlayer1(mini_board_second | mini_board_third); //connects the 2 mini board
+
+
+        }
+
+
+
+        if(mini_board1==2 & mini_board2==4) //rows and columns, mini board 2 to be mini board 1, and mini board 4 to
+            // be mini board 2
         {
             create_mini_board_twist(2, 1); //rotate left
             create_mini_board_twist(4, 1); //rotate left
@@ -297,7 +329,9 @@ public class Board {
 
 
         }
-        else if(mini_board1==1 & mini_board2==3)//mini board 3 to be mini board 1, and mini board 1 to be mini board 2
+        else if(mini_board1==1 & mini_board2==3)//rows and columns, mini board 3 to be mini board 1, and mini board
+            // 1 to be mini
+            // board 2
         {
             create_mini_board_twist(1, 2); //rotate right
             create_mini_board_twist(3, 2); //rotate right
@@ -327,7 +361,8 @@ public class Board {
 
 
         }
-        else if(mini_board1==3 & mini_board2==4)//mini board 3 to be mini board 1, and mini board 4 to be mini board 2
+        else if(mini_board1==3 & mini_board2==4)//rows and columns, mini board 3 to be mini board 1, and mini board 4 to
+            // be mini board 2
         {
 
             setPlayer1(getPlayer1()<<18); //moving mini boards to be 1 and 2
@@ -342,7 +377,8 @@ public class Board {
 
     /**
      * returns the index matching to the right mini board by doing the rotate back
-     * @param index - the index to put the trophy according to mini board 1, 2
+     * @param index - the index to put the trophy according to mini board 1, 2 for rows and cols
+     *              or mini boards 1, 4 for diagonal
      * @param mini_board1- the first mini board to rotate
      * @param mini_board2- the second mini board to rotate
      * @return
@@ -351,6 +387,35 @@ public class Board {
     {
         long mask = 0b100000000000000000000000000000000000000000000000000000000000000L;
         Board b;
+
+        if(mini_board1==2 & mini_board2==3)//diagonal
+        {
+            long id_mask = (mask >>> (index - 1)); //the place to put the trophy
+            long new_mask = (long) id_mask >>>9;//mini board 1 to 2
+            id_mask = id_mask <<9; //mini board 4 to be 3
+            long mask_total= id_mask | new_mask;//matching them
+
+            if(mask_total==0){//
+                b= new Board();
+                b.setPlayer1(0);
+                b.setPlayer2(id_mask);
+            }
+            else {
+                b= new Board();
+                b.setPlayer1(0);
+                b.setPlayer2(mask_total);}
+            b.create_mini_board_twist(2, 2);//rotate back to the right
+            b.create_mini_board_twist(3, 2);//rotate back to the right
+            int count=1;
+            while((mask & b.getPlayer2()) ==0)//count the new index according to mini board 2, 3
+            {
+                count++;
+                mask=mask>>>1;
+            }
+            return count;
+
+        }
+
         if(mini_board1==2 & mini_board2==4)
         {
             long id_mask = (mask >>> (index - 1)); //the place to put the trophy

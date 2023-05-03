@@ -1,4 +1,5 @@
 package com.example.pentagogame.View;
+
 import com.example.pentagogame.AiPlayer;
 import com.example.pentagogame.Controller.ControllerClass;
 import javafx.application.Application;
@@ -16,6 +17,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import java.io.File;
 import java.util.*;
 
@@ -23,7 +25,7 @@ import java.util.*;
 public class TheBoard extends Application {
     private final int BOARD_SIZE = 6; //6x6
     private final int MINI_BOARD_SIZE = 3; //mini board size
-    private final int ROTATE_BUTTONS= 8; //number of buttons for rotate
+    private final int ROTATE_BUTTONS = 8; //number of buttons for rotate
     private int turn; //the current turn
     private boolean rotateOnce; //rotating only once
     private boolean forceRotating; //forcing to rotate
@@ -31,26 +33,26 @@ public class TheBoard extends Application {
     private boolean error; //checks for invalid moves
     private Label la; //label for current turn and winner or tie
     private ControllerClass controller = new ControllerClass();//connection to the controller
-    private Button[] buttons = new Button[BOARD_SIZE*BOARD_SIZE]; // create an array to store the buttons- of the board itself
+    private Button[] buttons = new Button[BOARD_SIZE * BOARD_SIZE]; // create an array to store the buttons- of the board itself
     private Button[] buttons_rotate = new Button[ROTATE_BUTTONS]; //create an array to store the buttons- of the rotate
 
-    Integer[] rightBold = new Integer[]{3,6,24,27};//contains buttons to bold in right side
-    Integer[] leftBold = new Integer[]{10,13,31,34};//contains buttons to bold in left side
-    Integer[] upBold = new Integer[]{29,30,19,20};//contains buttons to bold in up
-    Integer[] downBold = new Integer[]{7,8,17,18};//contains buttons to bold in down
+    Integer[] rightBold = new Integer[]{3, 6, 24, 27};//contains buttons to bold in right side
+    Integer[] leftBold = new Integer[]{10, 13, 31, 34};//contains buttons to bold in left side
+    Integer[] upBold = new Integer[]{29, 30, 19, 20};//contains buttons to bold in up
+    Integer[] downBold = new Integer[]{7, 8, 17, 18};//contains buttons to bold in down
 
     List<Integer> right = new ArrayList<>(Arrays.asList(rightBold));
     List<Integer> left = new ArrayList<>(Arrays.asList(leftBold));
     List<Integer> up = new ArrayList<>(Arrays.asList(upBold));
     List<Integer> down = new ArrayList<>(Arrays.asList(downBold));
 
-    private final int RIGHT_DOWN_BOLD=9;
-    private final int RIGHT_UP_BOLD=21;
-    private final int LEFT_DOWN_BOLD=16;
-    private final int LEFT_UP_BOLD=28;
+    private final int RIGHT_DOWN_BOLD = 9;
+    private final int RIGHT_UP_BOLD = 21;
+    private final int LEFT_DOWN_BOLD = 16;
+    private final int LEFT_UP_BOLD = 28;
 
 
-    private boolean winning=false;
+    private boolean winning = false;
     private int mini_board;
     private int index;
     private int rotating;
@@ -73,6 +75,7 @@ public class TheBoard extends Application {
 
     /**
      * sets the rotate once
+     *
      * @param rotateOnce- rotating only once
      */
     public void setRotateOnce(boolean rotateOnce) {
@@ -81,6 +84,7 @@ public class TheBoard extends Application {
 
     /**
      * sets the turn
+     *
      * @param turn- current turn to change
      */
     public void setTurn(int turn) {
@@ -89,6 +93,7 @@ public class TheBoard extends Application {
 
     /**
      * gets the current turn
+     *
      * @return thr current turn
      */
     public int getTurn() {
@@ -102,6 +107,7 @@ public class TheBoard extends Application {
 
     /**
      * sets the error
+     *
      * @param b- invalid move
      */
     public void setError(boolean b) {
@@ -110,6 +116,7 @@ public class TheBoard extends Application {
 
     /**
      * sets the force rotating
+     *
      * @param bool
      */
     public void setForceRotating(boolean bool) {
@@ -118,6 +125,7 @@ public class TheBoard extends Application {
 
     /**
      * sets the label- the current turn or the winner or tie
+     *
      * @param s
      */
     public void setLa(String s) {
@@ -125,11 +133,11 @@ public class TheBoard extends Application {
     }
 
 
-
     /**
      * checks if end of game, if yes than returns the winner or tie, checks if there was an invalid move
-     * @param s- the string that indicates if there was a win, a tie, an error or the rotating worked well
-     * @param b- the buttons of the board
+     *
+     * @param s-  the string that indicates if there was a win, a tie, an error or the rotating worked well
+     * @param b-  the buttons of the board
      * @param b2- the buttons of the rotate
      * @return true if there was an error or false otherwise
      */
@@ -139,7 +147,7 @@ public class TheBoard extends Application {
             if (s == "error") {
                 return true;
             } else {
-                this.winning=true;
+                this.winning = true;
                 setLa(s);
                 this.la.setTextFill(Color.web("#0076a3"));
                 la.setPrefSize(120, 120);
@@ -158,10 +166,10 @@ public class TheBoard extends Application {
 
     /**
      * initializes the board itself
+     *
      * @param primaryStage- the stage to work with
      */
-    public void initialize_the_board(Stage primaryStage)
-    {
+    public void initialize_the_board(Stage primaryStage) {
         GridPane grid = new GridPane();//the buttons of the board itself
         Screen screen = Screen.getPrimary();
         grid.setPadding(new Insets(10));
@@ -194,49 +202,39 @@ public class TheBoard extends Application {
                 num++;
                 cell.setId(Integer.toString(num));//sets the id
                 cell.setPadding(new Insets(1));
-                if(right.contains(Integer.parseInt(cell.getId()))|left.contains(Integer.parseInt(cell.getId()))|
-                        up.contains(Integer.parseInt(cell.getId()))|down.contains(Integer.parseInt(cell.getId()))){
-                    if(right.contains(Integer.parseInt(cell.getId())))//right bold
+                if (right.contains(Integer.parseInt(cell.getId())) | left.contains(Integer.parseInt(cell.getId())) |
+                        up.contains(Integer.parseInt(cell.getId())) | down.contains(Integer.parseInt(cell.getId()))) {
+                    if (right.contains(Integer.parseInt(cell.getId())))//right bold
                     {
                         cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                                 "    -fx-border-width: 0 7px 0 0;");
-                    }
-                    else if(left.contains(Integer.parseInt(cell.getId())))//left bold
+                    } else if (left.contains(Integer.parseInt(cell.getId())))//left bold
                     {
                         cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                                 "    -fx-border-width: 0 0 0 7px;");
-                    }
-                    else if(up.contains(Integer.parseInt(cell.getId())))//up bold
+                    } else if (up.contains(Integer.parseInt(cell.getId())))//up bold
                     {
                         cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                                 "    -fx-border-width: 7px 0 0 0;");
-                    }
-                    else if(down.contains(Integer.parseInt(cell.getId())))//down bold
+                    } else if (down.contains(Integer.parseInt(cell.getId())))//down bold
                     {
                         cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                                 "    -fx-border-width: 0 0 7px 0;");
                     }
 
-                }
-                else if(Integer.parseInt(cell.getId())==RIGHT_DOWN_BOLD)
-                {
+                } else if (Integer.parseInt(cell.getId()) == RIGHT_DOWN_BOLD) {
                     cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                             "    -fx-border-width: 0 7px 7px 0;");
-                }
-                else if(Integer.parseInt(cell.getId())==LEFT_DOWN_BOLD)
-                {
+                } else if (Integer.parseInt(cell.getId()) == LEFT_DOWN_BOLD) {
                     cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                             "    -fx-border-width: 0 0 7px 7px;");
-                }
-                else if(Integer.parseInt(cell.getId())==RIGHT_UP_BOLD)
-                {
+                } else if (Integer.parseInt(cell.getId()) == RIGHT_UP_BOLD) {
                     cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                             "    -fx-border-width: 7px 7px 0 0;");
-                } else if (Integer.parseInt(cell.getId())==LEFT_UP_BOLD) {
+                } else if (Integer.parseInt(cell.getId()) == LEFT_UP_BOLD) {
                     cell.setStyle("-fx-background-color: brown; -fx-border-color: black;" +
                             "    -fx-border-width:  7px 0 0 7px;");
-                }
-                else {
+                } else {
                     cell.setStyle("-fx-background-color: brown;");//regular buttons
                 }
                 grid.add(cell, col, row);//adding to the grid
@@ -256,11 +254,11 @@ public class TheBoard extends Application {
 
     /**
      * starts the rotation buttons
+     *
      * @param primaryStage- the stage to work with
-     * @param borderPane- the same borderPane as the board itself
+     * @param borderPane-   the same borderPane as the board itself
      */
-    public void start_rotate_buttons(Stage primaryStage, BorderPane borderPane)
-    {
+    public void start_rotate_buttons(Stage primaryStage, BorderPane borderPane) {
         Screen screen = Screen.getPrimary();
         double x = screen.getBounds().getWidth();//the screen size
         double y = screen.getBounds().getHeight();//the screen size
@@ -311,7 +309,6 @@ public class TheBoard extends Application {
         vBox.setAlignment(Pos.TOP_LEFT);
 
 
-
         Button exit_button = new Button("EXIT");//exit button
         exit_button.setPrefSize(120, 50);
         exit_button.setTranslateX(0);
@@ -321,7 +318,6 @@ public class TheBoard extends Application {
             controller.setExitButton();//exits the game
         });
         vBox.getChildren().add(exit_button);
-
 
 
         Button backButton = new Button("Back to Open");///back button
@@ -335,7 +331,6 @@ public class TheBoard extends Application {
         vBox.getChildren().add(backButton);
         vBox.setAlignment(Pos.TOP_LEFT);
         borderPane.setLeft(vBox);
-
 
 
         VBox vBox3 = new VBox(10); // 10 pixels of spacing between the buttons
@@ -381,40 +376,54 @@ public class TheBoard extends Application {
 
     /**
      * manages the AI player
+     *
      * @param a- the AIPlayer play
      */
-    public void ai_play(AiPlayer a)
-    {
+    public void ai_play(AiPlayer a) {
         Button b;
         if (this.turn == 1) { //ai turn
             a.setPlayers();
             AiPlayer.player_move++; //adding the strategy turn of the triple power play
-            int grade1= a.triple_power_play(); //the grade that the triple power play returns
-            int grade2= a.defense(); //the grade that the defence returns
-            int grade3= a.rows_columns(); //the grade that the rows amd columns returns
+            int grade1 = a.triple_power_play(); //the grade that the triple power play returns
+            int grade2 = a.defense(); //the grade that the defence returns
+            int grade3 = a.rows_columns(); //the grade that the rows amd columns returns
+            int grade4 = a.diagonal(); //the grade that the diagonal returns
 
-            if(grade1>grade2 & grade1>grade3) //the triple power play chosen
+
+            if (grade1 > grade2 & grade1 > grade3 & grade1 > grade4) //the triple power
+            // play chosen
             {
                 mini_board = AiPlayer.mini_board_for_twist_triple; //the mini board to twist
                 index = AiPlayer.index_triple; //the index to add the trophy
                 rotating = AiPlayer.direction_rotating_triple; //the direction to rotate
-            }
-            else if(grade2>grade1 & grade2>grade3) //the defence chosen
+
+            } else if (grade2 > grade1 & grade2 > grade3 & grade2 > grade4) //the defence
+            // chosen
             {
                 mini_board = AiPlayer.mini_board_for_twist_defense; //the mini board to twist
                 index = AiPlayer.index_defense; //the index to add the trophy
                 rotating = AiPlayer.direction_rotating_defense; //the direction to rotate
                 AiPlayer.player_move--; //the triple power play wasn't chosen
 
-            } else if (grade3>grade2 & grade3>grade1) { //the rows_columns chosen
+            } else if (grade3 > grade2 & grade3 > grade1 & grade3 > grade4) { //the
+                // rows_columns chosen
                 mini_board = AiPlayer.mini_board_for_twist_rows_columns; //the mini board to twist
                 index = AiPlayer.index_rows_columns; //the index to add the trophy
                 rotating = AiPlayer.direction_rotating_rows_columns; //the direction to rotate
                 AiPlayer.player_move--; //the triple power play wasn't chosen
+
+            } else if (grade4 > grade1 & grade4 > grade2 & grade4 > grade3)//the
+            // diagonal chosen
+            {
+                mini_board = AiPlayer.mini_board_for_twist_diagonal; //the mini board to twist
+                index = AiPlayer.index_diagonal; //the index to add the trophy
+                rotating = AiPlayer.direction_rotating_diagonal; //the direction to rotate
+                AiPlayer.player_move--; //the triple power play wasn't chosen
             }
+
             b = buttons[index - 1];
             setError(endGame((controller.addToolAI(getTurn(), b, this.forceRotating)), buttons, buttons_rotate));//adding a tool
-            if(this.winning==false) {
+            if (this.winning == false) {
                 a.setPlayers();
                 if (this.error == false) {//valid move
                     if (this.turn == 0)
@@ -451,7 +460,7 @@ public class TheBoard extends Application {
                 if (this.error == false) {
                     if (getTurn() == 0) //still not human
                     {
-                        setRotateOnce(controller.rotateBoardAi( mini_board,
+                        setRotateOnce(controller.rotateBoardAi(mini_board,
                                 rotating, this.rotateOnce, buttons));//rotating the miniboard
                     }
                     setForceRotating(true);
@@ -465,12 +474,13 @@ public class TheBoard extends Application {
 
     /**
      * starts the game
+     *
      * @param primaryStage- the main stage
      */
     public void start(Stage primaryStage) {
         initialize_the_board(primaryStage); //initializes the board
         setLa("player 1\nturn");
-        if(OpeningScreen.num==0) { //hVSh
+        if (OpeningScreen.num == 0) { //hVSh
             for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
                 Button b = buttons[i];
                 b.setOnAction(e -> {
@@ -499,13 +509,9 @@ public class TheBoard extends Application {
                     });
                 }
             }
-        }
-
-
-
-        else if(OpeningScreen.num==1){ //aiVSh
-            AiPlayer a= new AiPlayer();
-            this.turn=1; //the first player is ai
+        } else if (OpeningScreen.num == 1) { //aiVSh
+            AiPlayer a = new AiPlayer();
+            this.turn = 1; //the first player is ai
             ai_play(a); //sets the AI
             setLa("player1\nturn");
             Timer timer = new Timer();
@@ -551,13 +557,13 @@ public class TheBoard extends Application {
                                 });
                             }
                         };
-                        if(this.winning==false){
+                        if (this.winning == false) {
                             timer.schedule(task, 1000);
                         }
-                            });
-                        }
-                   }
+                    });
                 }
             }
+        }
+    }
 }
 
